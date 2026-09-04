@@ -3,7 +3,7 @@ TARGET = w2bt
 
 CC = clang
 
-CFLAGS = -Wall -Wextra -O2 
+CFLAGS = -Wall -Wextra -O2 -I./include/
 
 BUILD_DIR = build
 BIN_DIR = bin
