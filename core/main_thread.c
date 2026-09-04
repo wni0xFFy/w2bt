@@ -4,12 +4,13 @@
 #include <stdio.h>
 #include <unistd.h>
 int main(){
-	sock_t fd = create_socket(25656);
-	sock_t client_socket = accept_socket(&fd);
-	int x = 'C';
-	while(1){
-		send(client_socket.fd, &x, sizeof(int), MSG_NOSIGNAL);	
+	sock_t* fd = create_socket(25656);
+	sock_t* client_socket = accept_socket(fd);
+	for(int i = 0; i < 10; i++){
+		char* data = receive_socket(client_socket, 256);
+		send_socket(client_socket, data, 256);	
 	}
-	printf("ZEROONEZEROONE %d", client_socket.settings.sin_port);
+	destroy_socket(client_socket);
+	destroy_socket(fd);
 	return -1;
 }

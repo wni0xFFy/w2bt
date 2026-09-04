@@ -7,5 +7,8 @@ typedef struct{
 	int settings_size;
 } sock_t;
 
-sock_t create_socket(int port);
-sock_t accept_socket(sock_t* master);
+void destroy_socket(sock_t* sock);
+sock_t* create_socket(int port);
+sock_t* accept_socket(sock_t* self);
+char* receive_socket(sock_t* client, int data_size);
+int send_socket(sock_t* client, char* buffer, int data_size);
