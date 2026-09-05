@@ -98,6 +98,15 @@ It can use to :
 		-1 - error
 		0 - ok
 
+	```C
+		void nonblocking_socket(sock_t* sc)
+	```
+
+	Make socket nonblocking
+
+	@param 
+		1. sc(sock_t*) - pointer to sock_t instance which you need make nonblocking
+
 # -----EXAMPLES------
 
 How to use it?

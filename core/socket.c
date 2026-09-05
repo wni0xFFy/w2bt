@@ -1,5 +1,6 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
+#include <fcntl.h>
 #include <stdio.h>
 #include <netinet/in.h>
 #include <unistd.h>
@@ -84,4 +85,9 @@ int send_socket(sock_t* client, char* buffer, int data_size){
 	if(client == NULL || buffer == NULL) return -1;
 	send(client->fd, buffer, data_size, 0);	
 	return 0;
+}
+
+void nonblocking_socket(sock_t* sc) {
+    int flags = fcntl(sc->fd, F_GETFL, 0);
+    fcntl(sc->fd, F_SETFL, flags | O_NONBLOCK);
 }
