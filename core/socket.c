@@ -13,7 +13,7 @@ sock_t* create_socket(int port){
 	int fd = socket(AF_INET, SOCK_STREAM, 0);
 	if(fd == -1){
 		free(s);
-		return NULL
+		return NULL;
 	};
 
 	struct sockaddr_in settings;
@@ -50,7 +50,7 @@ sock_t* accept_socket(sock_t* self){
 
 	sock_t* client = malloc(sizeof(sock_t));
 
-	client->settings_size = sizeof(sockaddr_in);
+	client->settings_size = sizeof(struct sockaddr_in);
 	client->fd = accept(self->fd, (struct sockaddr*)&client->settings, (socklen_t*)&client->settings_size);
 
 	if(client->fd == -1){
