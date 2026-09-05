@@ -11,7 +11,10 @@ sock_t* create_socket(int port){
 	if(s == NULL) return s;
 
 	int fd = socket(AF_INET, SOCK_STREAM, 0);
-	if(fd == -1) return NULL;
+	if(fd == -1){
+		free(s);
+		return NULL
+	};
 
 	struct sockaddr_in settings;
 	settings.sin_family = AF_INET;
@@ -20,12 +23,14 @@ sock_t* create_socket(int port){
 
 	int err = bind(fd, (struct sockaddr*)&settings, sizeof(settings));
     if(err == -1) {
+    	free(s);
     	close(fd);
         return NULL;
     }
 
     err = listen(fd, 5);
     if(err == -1){
+    	free(s);
     	close(fd);
     	return NULL;
     }
