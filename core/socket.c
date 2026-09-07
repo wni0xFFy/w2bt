@@ -5,7 +5,10 @@
 #include <netinet/in.h>
 #include <unistd.h>
 #include "include/socket.h"
+#include "include/network_buffer.h"
 #include <stdlib.h>
+
+#define ATTEMPTS 10 //change it with config.json(future)
 
 sock_t* create_socket(int port){
 	sock_t* s = malloc(sizeof(sock_t));
@@ -65,29 +68,20 @@ sock_t* accept_socket(sock_t* self){
 	return client;
 }
 
-buffer* receive_socket(sock_t* client, int expected_size){
-	if(client == NULL) return NULL;
+int receive_socket(sock_t* client, network_buffer* buf){
+	if(client == NULL || buf == NULL) return -1;
 
-	char* buffer = malloc(expected_size);
-	if(buffer == NULL){
-		return NULL;
-	}
-	int size = expected_size;
-	while(expected_size > 0){
-		int readed = read(client->fd, buffer, expected_size);
-		if(readed < 1){
-			free(buffer);
-			return NULL;
-		}
-		expected_size -= readed;
-		buffer += readed;
-	}
-	return buffer - size; 
+	int readed = read(client->fd, buf->data, buf->size);
+	buf->attempts -= 1;
+	if(readed < 1) return -2;
+	buf->real_size += readed;
+
+	return 0;
 }
 
-int send_socket(sock_t* client, char* buffer, int data_size){
-	if(client == NULL || buffer == NULL) return -1;
-	send(client->fd, buffer, data_size, 0);	
+int send_socket(sock_t* client, network_buffer* buf){
+	if(client == NULL || buf == NULL) return -1;
+	send(client->fd, buf->data, buf->real_size, 0);	
 	return 0;
 }
 
