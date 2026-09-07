@@ -35,6 +35,10 @@ sock_t* create_socket(int port){
     	close(fd);
     	return NULL;
     }
+    int flags = fcntl(fd, F_GETFL, 0);
+	flags &= ~O_NONBLOCK;
+	fcntl(fd, F_SETFL, flags);
+
     s->fd = fd;
     s->settings = settings;
 
@@ -61,21 +65,21 @@ sock_t* accept_socket(sock_t* self){
 	return client;
 }
 
-char* receive_socket(sock_t* client, int data_size){
+buffer* receive_socket(sock_t* client, int expected_size){
 	if(client == NULL) return NULL;
 
-	char* buffer = malloc(data_size);
+	char* buffer = malloc(expected_size);
 	if(buffer == NULL){
 		return NULL;
 	}
-	int size = data_size;
-	while(data_size > 0){
-		int readed = read(client->fd, buffer, data_size);
+	int size = expected_size;
+	while(expected_size > 0){
+		int readed = read(client->fd, buffer, expected_size);
 		if(readed < 1){
 			free(buffer);
 			return NULL;
 		}
-		data_size -= readed;
+		expected_size -= readed;
 		buffer += readed;
 	}
 	return buffer - size; 

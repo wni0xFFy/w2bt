@@ -3,14 +3,12 @@ TARGET = w2bt
 
 CC = clang
 
-CFLAGS = -Wall -Wextra -O2 -I./include/
-
+CFLAGS = -Wall -Wextra -O2 -I./include/ -g
 BUILD_DIR = build
 BIN_DIR = bin
 
-SRCS := $(shell find . -name "*.c" ! -path "./$(BUILD_DIR)/*" ! -path "./$(BIN_DIR)/*")
+SRCS := $(shell find . -name "*.c" )
 OBJS := $(SRCS:%.c=$(BUILD_DIR)/%.o)
-
 EXEC = $(BIN_DIR)/$(TARGET)
 
 #
@@ -21,7 +19,6 @@ $(EXEC): $(OBJS)
 $(BUILD_DIR)/%.o: %.c
 	@mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) -c $< -o $@
-
 
 clean:
 	@rm -rf $(BUILD_DIR) $(BIN_DIR)
