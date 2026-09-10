@@ -5,10 +5,7 @@
 #include <netinet/in.h>
 #include <unistd.h>
 #include "include/socket.h"
-#include "include/network_buffer.h"
 #include <stdlib.h>
-
-#define ATTEMPTS 10 //change it with config.json(future)
 
 sock_t* create_socket(int port){
 	sock_t* s = malloc(sizeof(sock_t));
@@ -68,21 +65,22 @@ sock_t* accept_socket(sock_t* self){
 	return client;
 }
 
-int receive_socket(sock_t* client, network_buffer* buf){
-	if(client == NULL || buf == NULL) return -1;
+int receive_socket(sock_t* client, void* buffer, uint16_t size){
+	if(client == NULL || buffer == NULL) return -1;
+	int readed = read(client->fd, buffer, size);
 
-	int readed = read(client->fd, buf->data, buf->size);
-	buf->attempts -= 1;
-	if(readed < 1) return -2;
-	buf->real_size += readed;
-
-	return 0;
+	if(readed == size) return 0;
+	else if(readed < 1) return -1;
+	else return readed;
 }
 
-int send_socket(sock_t* client, network_buffer* buf){
-	if(client == NULL || buf == NULL) return -1;
-	send(client->fd, buf->data, buf->real_size, 0);	
-	return 0;
+int send_socket(sock_t* client, void* buffer, uint16_t size){
+	if(client == NULL || buffer == NULL) return -1;
+	int sended = send(client->fd, buffer, size, 0);
+
+	if(sended == size) return 0;
+	if(sended < 1) return -1;
+	else return sended;	
 }
 
 void nonblocking_socket(sock_t* sc) {
