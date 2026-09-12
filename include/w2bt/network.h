@@ -1,15 +1,15 @@
 #pragma once 
 
 typedef enum{
-	SERVER_READ,
-	SERVER_WRITE,
-	CLIENT_WRITE,
-	CLIENT_READ,
-} server_states;
+	IN,
+	OUT, 
+	ACCEPT,
+} STATES;
 
 typedef struct{
 	int fd;
-	server_states state;
+	STATES state;
 	void* data;
-} operation;
+	uint16_t size;
+} data;
 

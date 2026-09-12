@@ -2,9 +2,9 @@
 #include "include/socket.h"
 #include <stdlib.h>
 int srv_init(sock_t* sc){
-	operation op = {0};
+	task op = {0};
 	op.fd = sc->fd;
-	op.state = SERVER_READ;
+	op.state = ACCEPT;
 	op.data = NULL;
 
 	//int epfd = epoll_create 
