@@ -41,15 +41,17 @@ sock_t* create_socket(int port, int backlog){
     return s;
 }
 
-void destroy_socket(sock_t* sock){
-	close(sock->fd);
+int destroy_socket(sock_t* sock){
+	int e = close(sock->fd);
 	free(sock);
+	return e;
 }
 
 sock_t* accept_socket(sock_t* self){
 	if(self == NULL) return NULL;
 
 	sock_t* client = malloc(sizeof(sock_t));
+	if(client == NULL) return NULL;
 
 	client->settings_size = sizeof(struct sockaddr_in);
 	client->fd = accept(self->fd, (struct sockaddr*)&client->settings, (socklen_t*)&client->settings_size);
@@ -58,14 +60,16 @@ sock_t* accept_socket(sock_t* self){
 		free(client);
 		return NULL;
 	}
+
 	return client;
 }
 
 int receive_socket(sock_t* client, void* buffer, uint16_t size, uint16_t offset){
 	if(client == NULL || buffer == NULL) return -1;
+	if(buffer + offset > buffer + size || size - offset <= 0) return -1;
 	int readed = read(client->fd, buffer + offset, size - offset);
 
-	if(readed == size) return size;
+	if(readed == size) return size; 	
 	else if(readed < 0) return -1;
 	else if(readed == 0) return -2;
 	else return readed;
@@ -73,6 +77,7 @@ int receive_socket(sock_t* client, void* buffer, uint16_t size, uint16_t offset)
 
 int send_socket(sock_t* client, void* buffer, uint16_t size, uint16_t offset){
 	if(client == NULL || buffer == NULL) return -1;
+	if(buffer + offset > buffer + size || size - offset <= 0) return -1;
 	int sended = send(client->fd, buffer + offset, size - offset, 0);
 
 	if(sended == size) return 0;

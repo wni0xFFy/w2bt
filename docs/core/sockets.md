@@ -31,12 +31,14 @@ functions
 # ---------FUNCTIONS---------
 
 	```C
-		void destroy_socket(sock_t* sock);
+		int destroy_socket(sock_t* sock);
 	```
 	Close socket and call free() for structure.
 
 	@param
 		1. sock(sock_t*) -> pointer to sock_t structure instance you need to destroy
+	@return
+		returns -1 if there is error or 0 if there isn't error.
 
 	```C
 		sock_t* create_socket(int port, int backlog);
