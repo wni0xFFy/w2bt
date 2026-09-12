@@ -9,6 +9,7 @@ int main(){
 	sock_t* client_socket = accept_socket(fd);
 	fprintf(stderr, "conncetion establisied\n");
 	nonblocking_socket(client_socket);
+	nonblocking_socket(fd);
 	uint8_t* buffer = malloc(256);
 	fprintf(stderr, "waiting..\n");
 	while(1){

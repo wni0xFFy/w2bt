@@ -35,10 +35,6 @@ sock_t* create_socket(int port, int backlog){
     	close(fd);
     	return NULL;
     }
-    int flags = fcntl(fd, F_GETFL, 0);
-	flags &= ~O_NONBLOCK;
-	fcntl(fd, F_SETFL, flags);
-
     s->fd = fd;
     s->settings = settings;
 
