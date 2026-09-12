@@ -7,7 +7,7 @@
 #include "include/socket.h"
 #include <stdlib.h>
 
-sock_t* create_socket(int port){
+sock_t* create_socket(int port, int backlog){
 	sock_t* s = malloc(sizeof(sock_t));
 	if(s == NULL) return s;
 
@@ -29,7 +29,7 @@ sock_t* create_socket(int port){
         return NULL;
     }
 
-    err = listen(fd, 5);
+    err = listen(fd, backlog);
     if(err == -1){
     	free(s);
     	close(fd);
