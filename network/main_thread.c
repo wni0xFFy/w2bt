@@ -1,5 +1,5 @@
 #include <w2bt/network.h>
-#include "include/socket.h"
+#include <w2bt/socket.h>
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
@@ -13,6 +13,10 @@ int main(){
 	fprintf(stderr, "waiting..\n");
 	while(1){
 		int e = receive_socket(client_socket, buffer, 256, 0);
+		if(e == -2){
+			fprintf(stderr, "connection closed by client");
+			break;
+		}
 		if(!(e < 0)){
 			send_socket(client_socket, buffer, 256, 0);
 			fprintf(stderr, "%s\n", buffer);

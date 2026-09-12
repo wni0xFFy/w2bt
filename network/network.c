@@ -1,11 +1,11 @@
 #include <w2bt/network.h>
-#include "include/socket.h"
+#include <w2bt/socket.h>
 #include <stdlib.h>
 int srv_init(sock_t* sc){
-	task op = {0};
-	op.fd = sc->fd;
-	op.state = ACCEPT;
-	op.data = NULL;
+	// task op = {0};
+	// op.fd = sc->fd;
+	// op.state = ACCEPT;
+	// op.data = NULL;
 
 	//int epfd = epoll_create 
 	//NETWORK -> 
@@ -16,6 +16,6 @@ int srv_init(sock_t* sc){
 	//NETWORK
 }
 
-operation srv_read(){
+//operation srv_read(){
 
-}
+//}
