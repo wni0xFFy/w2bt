@@ -65,18 +65,19 @@ sock_t* accept_socket(sock_t* self){
 	return client;
 }
 
-int receive_socket(sock_t* client, void* buffer, uint16_t size){
+int receive_socket(sock_t* client, void* buffer, uint16_t size, uint16_t offset){
 	if(client == NULL || buffer == NULL) return -1;
-	int readed = read(client->fd, buffer, size);
+	int readed = read(client->fd, buffer + offset, size - offset);
 
-	if(readed == size) return 0;
-	else if(readed < 1) return -1;
+	if(readed == size) return size;
+	else if(readed < 0) return -1;
+	else if(readed == 0) return -2;
 	else return readed;
 }
 
-int send_socket(sock_t* client, void* buffer, uint16_t size){
+int send_socket(sock_t* client, void* buffer, uint16_t size, uint16_t offset){
 	if(client == NULL || buffer == NULL) return -1;
-	int sended = send(client->fd, buffer, size, 0);
+	int sended = send(client->fd, buffer + offset, size - offset, 0);
 
 	if(sended == size) return 0;
 	if(sended < 1) return -1;
