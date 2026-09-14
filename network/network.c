@@ -1,19 +1,29 @@
 #include <w2bt/network.h>
 #include <w2bt/socket.h>
 #include <stdlib.h>
-int srv_init(sock_t* sc){
-	// task op = {0};
-	// op.fd = sc->fd;
-	// op.state = ACCEPT;
-	// op.data = NULL;
+#include <sys/epoll.h>
 
-	//int epfd = epoll_create 
-	//NETWORK -> 
-	//TASK HANDLER -> 
-	//DISTRIBUTOR ->
-	//WORKER -> 
-	//TASK HANDLER -> 
-	//NETWORK
+int create_sockets_poll(sock_t* sc){
+	task op = malloc(sizeof(task));
+	op.fd = sc->fd;
+	op.state = ACCEPT;
+
+	int epfd = epoll_create1();
+	if(epfd == -1){
+		return -1;
+	}
+
+	struct event server_event;
+
+	server_event.events = EPOLLIN;
+	server_event.data.ptr = op;
+
+	if(epoll_ctl(epfd, EPOLL_CTL_ADD, sc->fd, &server_event)){
+		close(epfd);
+		return -2;
+	}						
+
+	return epfd;
 }
 
 //operation srv_read(){

@@ -6,13 +6,12 @@
 #include <string.h>
 int main(){
 	sock_t* fd = create_socket(25656, 5);
-	sock_t* client_socket = accept_socket(fd);
-	fprintf(stderr, "conncetion establisied\n");
-	nonblocking_socket(client_socket);
-	nonblocking_socket(fd);
 	uint8_t* buffer = malloc(256);
 	fprintf(stderr, "waiting..\n");
+	nonblocking_socket(fd);
+
 	while(1){
+		int c = epoll_wait();
 		int e = receive_socket(client_socket, buffer, 256, 0);
 		if(e == -2){
 			fprintf(stderr, "connection closed by client");

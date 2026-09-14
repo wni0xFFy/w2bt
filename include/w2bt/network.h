@@ -9,7 +9,7 @@ typedef enum{
 typedef struct{
 	int fd;
 	STATES state;
-	void* data;
-	uint16_t size;
-} data;
+} task_t;
+
+int create_sockets_poll(sock_t* sc);
 
