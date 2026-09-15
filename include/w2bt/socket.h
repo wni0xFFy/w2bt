@@ -1,5 +1,6 @@
 #pragma once 
 #include <netinet/in.h>
+
 typedef struct{
 	int fd; 
 	struct sockaddr_in settings;
