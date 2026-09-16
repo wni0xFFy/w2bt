@@ -9,6 +9,8 @@
 const int MAXEVENTS = 12;
 
 int main(){
+	setbuf(stdout, NULL);
+
 	sock_t* fd = create_socket(25656, 5);
 	nonblocking_socket(fd);
 
@@ -16,9 +18,7 @@ int main(){
 	if(epfd == NULL) return -1;
 
 	add_socket_event(epfd, fd, ACCEPT, EPOLLIN);
-	uint8_t* buffer = malloc(256);
 	fprintf(stderr, "waiting..\n");
-
 	while(1){
 		int s = 0;
 		task_t** tasks = wait_tasks(epfd, &s);
@@ -27,14 +27,16 @@ int main(){
 				sock_t* client = accept_socket(fd);
 				nonblocking_socket(client);
 				add_socket_event(epfd, client, IN, EPOLLIN);
+				fprintf(stdout, "user connected.\n");
 				continue;
 			}
 			if(tasks[i]->state == IN){
-				fprintf(stderr, "YEAH. THAT'S FUCKING AWESOME");
+				fprintf(stdout, "user disconnected.\n");
 				destroy_socket(tasks[i]->data);
 			}
 		}
 	}
+
 	destroy_socket(fd);
 	delete_sockets_poll(epfd);
 	return -1;
