@@ -1,2 +1,3 @@
 docs/*.drawio
-tools/
+bin
+build
