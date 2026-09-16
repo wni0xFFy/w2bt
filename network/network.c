@@ -4,29 +4,39 @@
 #include <stdlib.h>
 #include <sys/epoll.h>
 
-int create_sockets_poll(sock_t* sc){
-	task_t* op = malloc(sizeof(task_t));
-	op->fd = sc->fd;
-	op->state = ACCEPT;
 
-	int epfd = epoll_create1(0);
-	if(epfd == -1){
+fd_poll_t* create_sockets_poll(int events_count){
+	fd_poll_t* fdp = malloc(sizeof(fd_poll_t));
+	fdp->epoll_fd = epoll_create1(0);
+	fdp->timeout = 30000;
+	if(fdp->epoll_fd == -1){
+		free(fdp);
+		return NULL;
+	}
+	fdp->evs = malloc(sizeof(task_t) * events_count);
+	fdp->events_count = events_count;
+	return fdp;
+}
+
+void delete_sockets_poll(fd_poll_t* epl){
+	close(epl->epoll_fd);
+	free(epl->evs);
+	free(epl);
+}
+
+int add_socket_event(fd_poll_t* epl, sock_t* sc, STATES state, uint32_t event){
+	task_t* task = malloc(sizeof(task_t));
+	task->fd = sc->fd;
+	task->state = state;
+	task->data = sc;
+
+	struct epoll_event ev;
+	ev.events = event;
+	ev.data.ptr = task;
+
+	if(epoll_ctl(epl->epoll_fd, EPOLL_CTL_ADD, sc->fd, &ev)){
 		return -1;
 	}
 
-	struct epoll_event server_event;
-
-	server_event.events = EPOLLIN;
-	server_event.data.ptr = op;
-
-	if(epoll_ctl(epfd, EPOLL_CTL_ADD, sc->fd, &server_event)){
-		close(epfd);
-		return -2;
-	}						
-
-	return epfd;
+	return 0;
 }
-
-//operation srv_read(){
-
-//}
