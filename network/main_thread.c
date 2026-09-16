@@ -20,18 +20,18 @@ int main(){
 	fprintf(stderr, "waiting..\n");
 
 	while(1){
-		int c = epoll_wait(epfd->epoll_fd, epfd->evs, 16, -1);
-		for(int i = 0; i < c; i++){
-			task_t* t = epfd->evs[i].data.ptr;
-			if(t->state == ACCEPT){
+		int s = 0;
+		task_t** tasks = wait_tasks(epfd, &s);
+		for(int i = 0; i < s; i++){
+			if(tasks[i]->state == ACCEPT){
 				sock_t* client = accept_socket(fd);
 				nonblocking_socket(client);
 				add_socket_event(epfd, client, IN, EPOLLIN);
 				continue;
 			}
-			if(t->state == IN){
+			if(tasks[i]->state == IN){
 				fprintf(stderr, "YEAH. THAT'S FUCKING AWESOME");
-				destroy_socket(t->data);
+				destroy_socket(tasks[i]->data);
 			}
 		}
 	}

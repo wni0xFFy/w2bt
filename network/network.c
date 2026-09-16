@@ -40,3 +40,15 @@ int add_socket_event(fd_poll_t* epl, sock_t* sc, STATES state, uint32_t event){
 
 	return 0;
 }
+
+task_t** wait_tasks(fd_poll_t* ep, int* size){
+	task_t** tasks = NULL;
+	int c = epoll_wait(ep->epoll_fd, ep->evs, ep->events_count, ep->timeout);
+	if(c <= 0) return NULL;
+	tasks = malloc(sizeof(task_t*) * c);
+	for(int i = 0; i < c; i++){
+		tasks[i] = ep->evs[i].data.ptr;
+	}
+	*size = c;
+	return tasks;
+}
