@@ -1,12 +1,11 @@
-#include <w2bt/network.h>
-#include <w2bt/socket.h>
+#include <w2bt/network/network.h>
+#include <w2bt/core/socket.h>
+#include <w2bt/network/handlers.h>
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/epoll.h>
-
-const int MAXEVENTS = 12;
 
 int main(){
 	setbuf(stdout, NULL);
@@ -23,17 +22,8 @@ int main(){
 		int s = 0;
 		task_t** tasks = wait_tasks(epfd, &s);
 		for(int i = 0; i < s; i++){
-			if(tasks[i]->state == ACCEPT){
-				sock_t* client = accept_socket(fd);
-				nonblocking_socket(client);
-				add_socket_event(epfd, client, IN, EPOLLIN);
-				fprintf(stdout, "user connected.\n");
-				continue;
-			}
-			if(tasks[i]->state == IN){
-				fprintf(stdout, "user disconnected.\n");
-				destroy_socket(tasks[i]->data);
-			}
+			if(tasks[i]->state == ACCEPT) accept_handler(fd, epfd);
+			else if(tasks[i]->state == IN) read_handler(tasks[i], NULL);
 		}
 	}
 

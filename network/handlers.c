@@ -1,0 +1,17 @@
+#include <w2bt/network/handlers.h>
+#include <w2bt/core/socket.h>
+#include <stdio.h>
+#include <sys/epoll.h>
+
+int accept_handler(sock_t* serv, fd_poll_t* epfd){
+	sock_t* client = accept_socket(serv);
+	if(client == NULL) return -1;
+
+	nonblocking_socket(client);
+	if(add_socket_event(epfd, client, IN, EPOLLIN) < 0) return -2;
+}
+
+int read_handler(task_t* t, uint8_t* buffer){
+	fprintf(stdout, "user send something");
+	destroy_socket(t->data);
+}

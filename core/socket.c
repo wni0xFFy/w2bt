@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <netinet/in.h>
 #include <unistd.h>
-#include <w2bt/socket.h>
+#include <w2bt/core/socket.h>
 #include <stdlib.h>
 
 sock_t* create_socket(int port, int backlog){

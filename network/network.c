@@ -1,9 +1,8 @@
-#include <w2bt/network.h>
-#include <w2bt/socket.h>
+#include <w2bt/network/network.h>
+#include <w2bt/core/socket.h>
 #include <unistd.h>
 #include <stdlib.h>
 #include <sys/epoll.h>
-
 
 fd_poll_t* create_sockets_poll(int events_count){
 	fd_poll_t* fdp = malloc(sizeof(fd_poll_t));

@@ -1,6 +1,7 @@
 #pragma once 
 #include <stdint.h>
-#include <w2bt/socket.h>
+#include <w2bt/core/socket.h>
+
 typedef enum{
 	IN,
 	OUT, 
