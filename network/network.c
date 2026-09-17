@@ -24,10 +24,14 @@ fd_poll_t* create_sockets_poll(int max_events_count, int timeout){
 	return fdp;
 }
 
-void delete_sockets_poll(fd_poll_t* epl){
-	close(epl->epoll_fd);
-	free(epl->evs);
+int delete_sockets_poll(fd_poll_t* epl){
+	int e = close(epl->epoll_fd);
+	/*POTENTIAL BUG here it can exit from function and doesn't free() memory*/	
+	if(e == -1) return -1;
+	free(epl->evs);		
 	free(epl);
+	
+	return 0;
 }
 
 int add_socket_event(fd_poll_t* epl, sock_t* sc, STATES state, uint32_t event){
