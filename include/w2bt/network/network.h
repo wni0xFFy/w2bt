@@ -16,12 +16,12 @@ typedef struct{
 
 typedef struct{
 	int epoll_fd;
-	uint16_t events_count; 
+	uint16_t max_events_count; 
 	int16_t timeout;
 	struct epoll_event* evs;
 } fd_poll_t;
 
-fd_poll_t* create_sockets_poll(int events_count);
+fd_poll_t* create_sockets_poll(int events_count, int timeout);
 int add_socket_event(fd_poll_t* epl, sock_t* sc, STATES state, uint32_t event);
 void delete_sockets_poll(fd_poll_t* epl);
 task_t** wait_tasks(fd_poll_t* ep, int* size);

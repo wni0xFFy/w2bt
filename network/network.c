@@ -4,16 +4,23 @@
 #include <stdlib.h>
 #include <sys/epoll.h>
 
-fd_poll_t* create_sockets_poll(int events_count){
+fd_poll_t* create_sockets_poll(int max_events_count, int timeout){
 	fd_poll_t* fdp = malloc(sizeof(fd_poll_t));
-	fdp->epoll_fd = epoll_create1(0);
-	fdp->timeout = 30000;
-	if(fdp->epoll_fd == -1){
+	if(fdp == NULL) return NULL;
+
+	fdp->evs = malloc(sizeof(task_t) * max_events_count);
+	if(fdp->evs == NULL) return NULL;
+
+	fdp->epoll_fd = epoll_create1(0); // POTENTIAL BUG WITH RACE CONDITIONS IN MULTITHREADING(read internet)
+	if(fdp->epoll_fd < 0){
+		free(fdp->evs);
 		free(fdp);
 		return NULL;
 	}
-	fdp->evs = malloc(sizeof(task_t) * events_count);
-	fdp->events_count = events_count;
+
+	fdp->timeout = timeout;
+	fdp->max_events_count = max_events_count;
+
 	return fdp;
 }
 
@@ -42,7 +49,7 @@ int add_socket_event(fd_poll_t* epl, sock_t* sc, STATES state, uint32_t event){
 
 task_t** wait_tasks(fd_poll_t* ep, int* size){
 	task_t** tasks = NULL;
-	int c = epoll_wait(ep->epoll_fd, ep->evs, ep->events_count, ep->timeout);
+	int c = epoll_wait(ep->epoll_fd, ep->evs, ep->max_events_count, ep->timeout);
 	if(c <= 0) return NULL;
 	tasks = malloc(sizeof(task_t*) * c);
 	for(int i = 0; i < c; i++){

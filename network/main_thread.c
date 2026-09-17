@@ -13,14 +13,16 @@ int main(){
 	sock_t* fd = create_socket(25656, 5);
 	nonblocking_socket(fd);
 
-	fd_poll_t* epfd = create_sockets_poll(10);
+	fd_poll_t* epfd = create_sockets_poll(10, 300);
 	if(epfd == NULL) return -1;
 
 	add_socket_event(epfd, fd, ACCEPT, EPOLLIN);
 	fprintf(stderr, "waiting..\n");
+	
 	while(1){
 		int s = 0;
 		task_t** tasks = wait_tasks(epfd, &s);
+		if(tasks == NULL) break; 
 		for(int i = 0; i < s; i++){
 			if(tasks[i]->state == ACCEPT) accept_handler(fd, epfd);
 			else if(tasks[i]->state == IN) read_handler(tasks[i], NULL);
