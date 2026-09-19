@@ -1,2 +1,4 @@
 docs/*.drawio
-tools/
+bin/
+build/
+w2bt.sublime-project
