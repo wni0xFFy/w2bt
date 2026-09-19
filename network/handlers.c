@@ -9,11 +9,12 @@ int accept_handler(sock_t* serv, fd_poll_t* epfd){
 	if(client == NULL) return -1;
 
 	nonblocking_socket(client);
-	if(add_socket_event(epfd, client, IN, EPOLLIN) < 0) return -2;
+	if(add_socket_event(epfd, client, IN, EPOLLIN) != NULL) return -2;
+	return 0;
 }
 
-int read_handler(task_t* t, uint8_t* buffer){
+int read_handler(task_t* t){
 	fprintf(stdout, "user send something\n");
 	destroy_socket(t->data);
-	free(t);
+	return 0;
 }

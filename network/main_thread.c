@@ -17,7 +17,7 @@ int main(){
 	fd_poll_t* epfd = create_sockets_poll(10, -1);
 	if(epfd == NULL) return -1;
 
-	add_socket_event(epfd, fd, ACCEPT, EPOLLIN);
+	task_t* server_task = add_socket_event(epfd, fd, ACCEPT, EPOLLIN);
 	fprintf(stdout, "waiting..\n");
 	
 	int timeout = 10;
@@ -26,13 +26,14 @@ int main(){
 		task_t** tasks = wait_tasks(epfd, &s);
 		if(tasks == NULL) break; 
 		for(int i = 0; i < s; i++){
-			if(tasks[i]->state == ACCEPT){	
+			if(tasks[i]->state == ACCEPT && timeout - 1 > 0){	
 				accept_handler(fd, epfd);
 				fprintf(stdout, "%d : CLIENT CONNECTES\n", i);
 			}
 			else if(tasks[i]->state == IN){
-				read_handler(tasks[i], NULL);
+				read_handler(tasks[i]);
 				fprintf(stdout, "%d : CLIENT SEND\n", i);
+				free(tasks[i]);
 			}
 			else{
 				fprintf(stdout, "%d : GHOST SOCKET\n", i);
@@ -43,6 +44,7 @@ int main(){
 		timeout--;
 	}
 
+	free(server_task);
 	destroy_socket(fd);
 	delete_sockets_poll(epfd);
 	return -1;

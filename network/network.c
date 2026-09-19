@@ -35,10 +35,10 @@ int delete_sockets_poll(fd_poll_t* epl){
 	return 0;
 }
 
-int add_socket_event(fd_poll_t* epl, sock_t* sc, STATES state, uint32_t event){
-	if(epl == NULL || sc == NULL) return -3;
+task_t* add_socket_event(fd_poll_t* epl, sock_t* sc, STATES state, uint32_t event){
+	if(epl == NULL || sc == NULL) return NULL;
 	task_t* task = malloc(sizeof(task_t));
-	if(task == NULL) return -2;
+	if(task == NULL) return NULL;
 
 	task->fd = sc->fd;
 	task->state = state;
@@ -48,8 +48,8 @@ int add_socket_event(fd_poll_t* epl, sock_t* sc, STATES state, uint32_t event){
 	ev.events = event;
 	ev.data.ptr = task;
 
-	if(epoll_ctl(epl->epoll_fd, EPOLL_CTL_ADD, sc->fd, &ev)) return -1;
-	return 0;
+	if(epoll_ctl(epl->epoll_fd, EPOLL_CTL_ADD, sc->fd, &ev)) return NULL;
+	return task;
 }
 
 task_t** wait_tasks(fd_poll_t* ep, int* tasks_count){
