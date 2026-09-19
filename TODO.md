@@ -4,8 +4,8 @@ core/network/
 	3. adding tasks [+]
 	5. handle tasks [+]
 	6. return error values [+-]
-	7. write checks for malloc()
-	8. repair malloc errors(double_malloc) 
+	7. write checks for malloc() [+]
+	8. repair malloc errors(double_malloc) [-]
 
 tests/ 
 	write tests architecture 

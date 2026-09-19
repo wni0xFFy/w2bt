@@ -24,7 +24,5 @@ typedef struct{
 fd_poll_t* create_sockets_poll(int events_count, int timeout);
 int add_socket_event(fd_poll_t* epl, sock_t* sc, STATES state, uint32_t event);
 int delete_sockets_poll(fd_poll_t* epl);
-
-//THIS FUNCTIONS SATANA HAS WROTE I HAVEN'T TOUCH IT
-task_t** wait_tasks(fd_poll_t* ep, int* size);
+task_t** wait_tasks(fd_poll_t* ep, int* tasks_count);
 

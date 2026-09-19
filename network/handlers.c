@@ -1,6 +1,7 @@
 #include <w2bt/network/handlers.h>
 #include <w2bt/core/socket.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <sys/epoll.h>
 
 int accept_handler(sock_t* serv, fd_poll_t* epfd){
@@ -12,6 +13,7 @@ int accept_handler(sock_t* serv, fd_poll_t* epfd){
 }
 
 int read_handler(task_t* t, uint8_t* buffer){
-	fprintf(stdout, "user send something");
+	fprintf(stdout, "user send something\n");
 	destroy_socket(t->data);
+	free(t);
 }
