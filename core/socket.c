@@ -68,7 +68,6 @@ int receive_socket(sock_t* client, void* buffer, uint16_t size, uint16_t offset)
 	if(client == NULL || buffer == NULL) return -1;
 	if(buffer + offset > buffer + size || size - offset <= 0) return -1;
 	int readed = read(client->fd, buffer + offset, size - offset);
-
 	if(readed == size) return size; 	
 	else if(readed < 0) return -1;
 	else if(readed == 0) return -2;

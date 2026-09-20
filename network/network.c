@@ -62,6 +62,7 @@ task_t** wait_tasks(fd_poll_t* ep, int* tasks_count){
 
 	for(int i = 0; i < c; i++){
 		tasks[i] = ep->evs[i].data.ptr;
+		if((ep->evs[i].events &~ EPOLLIN) == EPOLLRDHUP) tasks[i]->state = CLOSED;
 	}
 
 	*tasks_count = c;

@@ -18,9 +18,12 @@ int main(){
 	if(epfd == NULL) return -1;
 
 	task_t* server_task = add_socket_event(epfd, fd, ACCEPT, EPOLLIN);
+
 	fprintf(stdout, "waiting..\n");
-	
+	uint8_t* buffer = malloc(32512);
+
 	int timeout = 10;
+
 	while(timeout){
 		int s = 0;
 		task_t** tasks = wait_tasks(epfd, &s);
@@ -31,10 +34,18 @@ int main(){
 				fprintf(stdout, "%d : CLIENT CONNECTES\n", i);
 			}
 			else if(tasks[i]->state == IN){
-				read_handler(tasks[i]);
+				read_handler(tasks[i], buffer, 256);
+				buffer[255] = '\0';
 				fprintf(stdout, "%d : CLIENT SEND\n", i);
-				free(tasks[i]);
+				for(int i = 0; i < 256; i++){
+					buffer[i] = 0;
+				}
 			}
+			else if(tasks[i]->state == CLOSED){
+				if(tasks[i]->state == CLOSED) fprintf(stdout, "CONNECTION CLOSED BY CLIENT\n");
+				close_handler(tasks[i]);
+			}
+
 			else{
 				fprintf(stdout, "%d : GHOST SOCKET\n", i);
 				free(tasks[i]);
@@ -43,7 +54,7 @@ int main(){
 		free(tasks);
 		timeout--;
 	}
-
+	free(buffer);
 	free(server_task);
 	destroy_socket(fd);
 	delete_sockets_poll(epfd);

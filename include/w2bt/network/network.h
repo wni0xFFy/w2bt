@@ -6,6 +6,7 @@ typedef enum{
 	IN,
 	OUT, 
 	ACCEPT,
+	CLOSED,
 } STATES;
 
 typedef struct{
