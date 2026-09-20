@@ -24,7 +24,7 @@ int main(){
 
 	int timeout = 10;
 
-	while(timeout){
+	while(1){
 		int s = 0;
 		task_t** tasks = wait_tasks(epfd, &s);
 		if(tasks == NULL) break; 
