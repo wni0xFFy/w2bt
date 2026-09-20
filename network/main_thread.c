@@ -17,7 +17,7 @@ int main(){
 	fd_poll_t* epfd = create_sockets_poll(10, -1);
 	if(epfd == NULL) return -1;
 
-	task_t* server_task = add_socket_event(epfd, fd, ACCEPT, EPOLLIN);
+	add_socket_event(epfd, fd, ACCEPT, EPOLLIN);
 
 	fprintf(stdout, "waiting..\n");
 	uint8_t* buffer = malloc(32512);
@@ -43,7 +43,7 @@ int main(){
 			}
 			else if(tasks[i]->state == CLOSED){
 				if(tasks[i]->state == CLOSED) fprintf(stdout, "CONNECTION CLOSED BY CLIENT\n");
-				close_handler(tasks[i]);
+				close_handler(epfd, tasks[i]);
 			}
 
 			else{
@@ -55,8 +55,6 @@ int main(){
 		timeout--;
 	}
 	free(buffer);
-	free(server_task);
-	destroy_socket(fd);
 	delete_sockets_poll(epfd);
 	return -1;
 }
