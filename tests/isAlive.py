@@ -1,7 +1,7 @@
 import os
 import subprocess
 import time
-
+import socket
 
 server = subprocess.Popen(
     ["../bin/w2bt"],
@@ -20,4 +20,7 @@ try:
 finally:
     server.terminate()
     server_stdout, _ = server.communicate()
-    print(server_stdout if server_stdout else "NOT PASSED")
+    if 'CONNECTION CLOSED BY CLIENT' in server_stdout:
+        print("PASSED")
+    else:
+        print("NOT PASSED")
