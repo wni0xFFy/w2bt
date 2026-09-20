@@ -1,7 +1,6 @@
 #include <w2bt/network/network.h>
 #include <w2bt/core/socket.h>
 #include <unistd.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <sys/epoll.h>
 
@@ -40,10 +39,7 @@ int delete_sockets_poll(fd_poll_t* epl){
 	int e = close(epl->epoll_fd);
 	/*POTENTIAL BUG here it can exit from function and doesn't free() memory*/	
 	if(e == -1) return -1;
-	fprintf(stdout, "popa : %i", epl->tasks_lenght);
-
 	for(uint32_t i = 0; i < epl->tasks_lenght; i++){
-		fprintf(stdout, "popa");
 		destroy_socket(epl->tasks[i]->data);
 		free(epl->tasks[i]);
 	}
@@ -102,11 +98,17 @@ task_t** wait_tasks(fd_poll_t* ep, int* tasks_count){
 }
 
 int delete_task(fd_poll_t* epl, task_t* t){
-	for(int i = 0; i < epl->tasks_lenght; i++){
-		if(epl->tasks[i] == t) fprintf(stdout, "DKJJFLKSJLF:\n");
-		//delete from epl->tasks
- 	}
-	//epl->lenght--;
-	//and delete it from epoll_ctl
+	int is_deleting = 0;
+	for(uint32_t i = 0; i < epl->tasks_lenght; i++){
+		if(epl->tasks[i] == t){
+			is_deleting = 1;
+		}
+		if(!is_deleting) continue;
+		epl->tasks[i] = epl->tasks[i+1];
+	}
+	if(!is_deleting) return -1;
+	epl->tasks_lenght -= 1;
+	destroy_socket(t->data);
+	free(t);
 	return 0;
 }

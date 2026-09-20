@@ -16,7 +16,6 @@ int accept_handler(sock_t* serv, fd_poll_t* epfd){
 
 int read_handler(task_t* t, uint8_t* buffer, int size){
 	if(t->state == CLOSED) fprintf(stdout, "wtf\n");
-	uint8_t* copy = buffer;
 	int readed = receive_socket(t->data, buffer, size, 0);
 	if(readed < size) return 1;
 	return 0;
@@ -24,6 +23,5 @@ int read_handler(task_t* t, uint8_t* buffer, int size){
 
 int close_handler(fd_poll_t* epl, task_t* t){
 	delete_task(epl, t);
-	destroy_socket(t->data);	
-	free(t);
+	return 0;
 }

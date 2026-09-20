@@ -53,8 +53,10 @@ int main(){
 		}
 		free(tasks);
 		timeout--;
+		fprintf(stdout, "c1 : %d\n", epfd->tasks_lenght);
 	}
 	free(buffer);
+	fprintf(stdout, "c : %d", epfd->tasks_lenght);
 	delete_sockets_poll(epfd);
 	return -1;
 }
