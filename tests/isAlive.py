@@ -16,7 +16,8 @@ try:
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.settimeout(2) 
     result = s.connect_ex(("127.0.0.1", 25656))
-    s.close()  
+    s.close()
+    time.sleep(2.5) 
 finally:
     server.terminate()
     server_stdout, _ = server.communicate()
@@ -24,3 +25,4 @@ finally:
         print("PASSED")
     else:
         print("NOT PASSED")
+        print(server_stdout)
