@@ -1,6 +1,7 @@
 #include <w2bt/network/network.h>
 #include <w2bt/core/socket.h>
 #include <unistd.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <sys/epoll.h>
 
@@ -98,8 +99,9 @@ task_t** wait_tasks(fd_poll_t* ep, int* tasks_count){
 }
 
 int delete_task(fd_poll_t* epl, task_t* t){
+	fprintf(stdout, "deleting task %x\n", t);
 	int is_deleting = 0;
-	for(uint32_t i = 0; i < epl->tasks_lenght; i++){
+	for(uint32_t i = 1; i < epl->tasks_lenght; i++){
 		if(epl->tasks[i] == t){
 			is_deleting = 1;
 		}

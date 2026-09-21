@@ -21,17 +21,14 @@ int main(){
 
 	fprintf(stdout, "waiting..\n");
 	uint8_t* buffer = malloc(32512);
-
-	int timeout = 10;
-
 	while(1){
 		int s = 0;
 		task_t** tasks = wait_tasks(epfd, &s);
 		if(tasks == NULL) break; 
 		for(int i = 0; i < s; i++){
-			if(tasks[i]->state == ACCEPT && timeout - 1 > 0){	
+			if(tasks[i]->state == ACCEPT){	
 				accept_handler(fd, epfd);
-				fprintf(stdout, "%d : CLIENT CONNECTES\n", i);
+				fprintf(stdout, "%d : CLIENT %x CONNECTES\n", i, tasks[i]);
 			}
 			else if(tasks[i]->state == IN){
 				read_handler(tasks[i], buffer, 256);
@@ -42,17 +39,18 @@ int main(){
 				}
 			}
 			else if(tasks[i]->state == CLOSED){
-				if(tasks[i]->state == CLOSED) fprintf(stdout, "CONNECTION CLOSED BY CLIENT\n");
-				close_handler(epfd, tasks[i]);
+				if(tasks[i]->state == CLOSED) fprintf(stdout, "CONNECTION %x BY CLIENT\n", tasks[i]);
+ 				close_handler(epfd, tasks[i]);
 			}
 
 			else{
-				fprintf(stdout, "%d : GHOST SOCKET\n", i);
+				fprintf(stdout, "%d : GHOST SOCKET %x\n ", i, tasks[i]);
 				free(tasks[i]);
+				break;
 			}
 		}
 		free(tasks);
-		timeout--;
+		fprintf(stdout, "events : %d\n", s);
 		fprintf(stdout, "c1 : %d\n", epfd->tasks_lenght);
 	}
 	free(buffer);
