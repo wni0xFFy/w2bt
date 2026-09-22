@@ -2,7 +2,10 @@
 
 - [ ] solve bug with sleeppy clients(hangling connections like client close conection but server doesn't and client just sleep:p)
 
-- [ ] fix memory leaks(at least one)
+- [ ] check memory leaks
 
--[ ] deleting tasks from array and epoll
+- [ ] optimize delete_task() function
+
+- [ ] recheck network module and update function names(make NORMAL names)
+
  
