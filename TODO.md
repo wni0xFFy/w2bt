@@ -1,7 +1,7 @@
 # TODO
-- [ ] recheck network module and update function names(make NORMAL names)
+- [+] recheck network module and update function names(make NORMAL names)
 
-- [ ] check memory leaks
+- [+] check memory leaks
 
 - [ ] write shell for server for configuring, stop, blocking clients, etc.
 
