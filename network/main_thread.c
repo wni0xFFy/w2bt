@@ -20,7 +20,7 @@ int main(){
 
 	nonblocking_socket(fd);
 
-	fd_poll_t* epfd = create_sockets_poll(10, -1);
+	fd_poll_t* epfd = create_poll(10, -1);
 	if(epfd == NULL){
 		fprintf(stderr, "Couldn't open create epoll!");
 	 	return -1;
@@ -66,6 +66,6 @@ int main(){
 		free(tasks);
 	}
 	free(buffer);
-	delete_sockets_poll(epfd);
+	delete_poll(epfd);
 	return -1;
 }

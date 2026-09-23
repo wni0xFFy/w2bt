@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <sys/epoll.h>
 
-fd_poll_t* create_sockets_poll(int max_events_count, int timeout){
+fd_poll_t* create_poll(int max_events_count, int timeout){
 	fd_poll_t* fdp = malloc(sizeof(fd_poll_t));
 	if(fdp == NULL) return NULL;
 
@@ -38,7 +38,7 @@ fd_poll_t* create_sockets_poll(int max_events_count, int timeout){
 	return fdp;
 }
 
-int delete_sockets_poll(fd_poll_t* epl){
+int delete_poll(fd_poll_t* epl){
 	if(epl == NULL) return -2;
 	int e = close(epl->epoll_fd);
 	/*POTENTIAL BUG here it can exit from function and doesn't free() memory*/	
