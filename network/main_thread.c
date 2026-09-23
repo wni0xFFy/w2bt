@@ -28,7 +28,7 @@ int main(){
 
 	fprintf(stdout, "[INIT] EPOLL CREATED\n");
 
-	add_socket_event(epfd, fd, ACCEPT, EPOLLIN);
+	add_poll_task(epfd, fd, ACCEPT, EPOLLIN);
 
 	fprintf(stdout, "[INIT] SOCKET ADDED TO EPOLL\n");
 

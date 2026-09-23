@@ -10,7 +10,7 @@ int accept_handler(sock_t* serv, fd_poll_t* epfd){
 	if(client == NULL) return -1;
 
 	nonblocking_socket(client);
-	if(add_socket_event(epfd, client, IN, EPOLLIN | EPOLLRDHUP) != NULL) return -2;
+	if(add_poll_task(epfd, client, IN, EPOLLIN | EPOLLRDHUP) != NULL) return -2;
 	return 0;
 }
 

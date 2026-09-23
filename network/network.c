@@ -54,7 +54,7 @@ int delete_sockets_poll(fd_poll_t* epl){
 	return 0;
 }
 
-task_t* add_socket_event(fd_poll_t* epl, sock_t* sc, STATES state, uint32_t event){
+task_t* add_poll_task(fd_poll_t* epl, sock_t* sc, STATES state, uint32_t event){
 	if(epl == NULL || sc == NULL) return NULL;
 	task_t* task = malloc(sizeof(task_t));
 	if(task == NULL) return NULL;
