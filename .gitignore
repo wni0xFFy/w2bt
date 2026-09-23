@@ -1,4 +1,5 @@
 docs/*.drawio
 bin/
 build/
+make
 w2bt.sublime-project
