@@ -9,8 +9,11 @@ fd_poll_t* create_sockets_poll(int max_events_count, int timeout){
 	fd_poll_t* fdp = malloc(sizeof(fd_poll_t));
 	if(fdp == NULL) return NULL;
 
-	fdp->evs = malloc(sizeof(task_t) * max_events_count);
-	if(fdp->evs == NULL) return NULL;
+	fdp->evs = calloc(max_events_count, sizeof(task_t));
+	if(fdp->evs == NULL){
+		free(fdp);
+		return NULL;
+	}
 
 	fdp->epoll_fd = epoll_create1(0); // POTENTIAL BUG WITH RACE CONDITIONS IN MULTITHREADING(read internet)
 	if(fdp->epoll_fd < 0){
