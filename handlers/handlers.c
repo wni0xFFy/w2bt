@@ -1,4 +1,4 @@
-#include <w2bt/network/handlers.h>
+#include <w2bt/handlers/handlers.h>
 #include <w2bt/core/socket.h>
 #include <w2bt/network/network.h>
 #include <stdio.h>
