@@ -22,7 +22,7 @@ int main(){
 
 	fd_poll_t* epfd = create_poll(10, -1);
 	if(epfd == NULL){
-		fprintf(stderr, "Couldn't open create epoll!");
+		fprintf(stderr, "[ERROR] Couldn't open create epoll!");
 	 	return -1;
 	}
 
@@ -34,38 +34,32 @@ int main(){
 
 	fprintf(stdout, "[RUNNING] INITIATION SUCCESSFUL\n");
 
-	uint8_t* buffer = malloc(32512);
 	while(1){
-		int s = 0;
-		task_t** tasks = wait_tasks(epfd, &s);
+		int tasks_count = 0;
+		task_t** tasks = wait_tasks(epfd, &tasks_count);
+
 		if(tasks == NULL) break; 
-		for(int i = 0; i < s; i++){
+		for(int i = 0; i < tasks_count; i++){
 			if(tasks[i]->state == ACCEPT){	
 				accept_handler(fd, epfd);
 				fprintf(stdout, "[RUNNING] CLIENT CONNECTED\n");
 			}
 			else if(tasks[i]->state == IN){
-				read_handler(tasks[i], buffer, 256);
-				buffer[255] = '\0';
+				read_handler(tasks[i]);
 				fprintf(stdout, "[RUNNING] CLIENT SENDED SOMETHING\n");
-				for(int i = 0; i < 256; i++){
-					buffer[i] = 0;
-				}
 			}
 			else if(tasks[i]->state == CLOSED){
-				if(tasks[i]->state == CLOSED) fprintf(stdout, "[RUNNING] CONNECTION CLOSED BY CLIENT\n");
  				close_handler(epfd, tasks[i]);
+ 				fprintf(stdout, "[RUNNING] CONNECTION CLOSED BY CLIENT\n");
 			}
 
 			else{
-				fprintf(stderr, "ghost socket. wrong state. data pointer 0x%x\n", (unsigned int)tasks[i]);
 				free(tasks[i]);
-				break;
+				fprintf(stderr, "ghost socket with wrong state");
 			}
 		}
 		free(tasks);
 	}
-	free(buffer);
 	delete_poll(epfd);
 	return -1;
 }
