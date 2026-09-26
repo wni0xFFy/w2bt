@@ -4,11 +4,13 @@
 #include <stdlib.h>
 #include <pthread.h>
 
+//helper structs(for threads's workers)
 typedef struct {
 	fd_poll_t* epl;
 	sock_t* srv;
 } network_args;
 
+//workers
 void* network_worker(void* args){
 	network_args* arg = args;
 	fd_poll_t* epl = arg->epl;
@@ -18,6 +20,7 @@ void* network_worker(void* args){
 }
 
 int main(){
+	//Network Module Starting
 	pthread_t network_main_thread;
 
 	fd_poll_t* epl = create_poll(15, 30000);
@@ -37,7 +40,9 @@ int main(){
 
 	pthread_create(&network_main_thread, NULL, network_worker, &args);
 	printf("[Network] Started.\n");
-	printf("[Network] working.\n");
-	pthread_join(network_main_thread, NULL);	
+
+	//waiting
+	pthread_join(network_main_thread, NULL);
+	//Cleaning
 	delete_poll(epl);	
 }
