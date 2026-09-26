@@ -3,7 +3,7 @@
 
 - [+] check memory leaks
 
-- [ ] delete buffers from handlers and separate handlers from network module
+- [+] delete buffers from handlers and separate handlers from network module
 
 - [ ] write shell for server for configuring, stop, blocking clients, etc.
 

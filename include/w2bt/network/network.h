@@ -31,3 +31,4 @@ int delete_poll(fd_poll_t* epl);
 task_t** wait_tasks(fd_poll_t* ep, int* tasks_count);
 int delete_task(fd_poll_t* epl, task_t* task);
 
+int network_main(fd_poll_t* epl, sock_t* server);

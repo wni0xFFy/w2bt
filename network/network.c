@@ -102,7 +102,6 @@ task_t** wait_tasks(fd_poll_t* ep, int* tasks_count){
 }
 
 int delete_task(fd_poll_t* epl, task_t* t){
-	fprintf(stdout, "deleting task %x\n", t);
 	int is_deleting = 0;
 	for(uint32_t i = 1; i < epl->tasks_lenght; i++){
 		if(epl->tasks[i] == t){
