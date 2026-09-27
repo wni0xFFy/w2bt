@@ -22,7 +22,7 @@ void* network_worker(void* args){
 int main(){
 	//Network Module Starting
 	pthread_t network_main_thread;
-
+	fprintf(stderr, "[Network] Startked.\n");
 	fd_poll_t* epl = create_poll(15, 30000);
 	if(epl == NULL){
 		printf("[ERROR] EPOLL NOT STARTED");
@@ -33,7 +33,6 @@ int main(){
 		printf("[ERROR] SOCKET NOT OPENED");
 		return -2;
 	}
-
 	network_args args = {0};
 	args.epl = epl;
 	args.srv = server;

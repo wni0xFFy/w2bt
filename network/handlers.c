@@ -10,15 +10,15 @@ int accept_handler(sock_t* serv, fd_poll_t* epfd){
 	if(client == NULL) return -1;
 
 	nonblocking_socket(client);
-	if(add_poll_task(epfd, client, IN, EPOLLIN | EPOLLRDHUP) != NULL) return -2;
+	if(add_poll_event(epfd, client, IN, EPOLLIN | EPOLLRDHUP) != NULL) return -2;
 	return 0;
 }
 
-int read_handler(task_t* t){
+int read_handler(event_t* e){
 	return 0;
 }
 
-int close_handler(fd_poll_t* epl, task_t* t){
-	delete_task(epl, t);
+int close_handler(fd_poll_t* epl, event_t* e){
+	delete_event(epl, e);
 	return 0;
 }

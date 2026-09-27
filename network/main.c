@@ -9,37 +9,37 @@
 
 int network_main(fd_poll_t* epl, sock_t* server){
 	setbuf(stdout, NULL);
-	add_poll_task(epl, server, ACCEPT, EPOLLIN);
+	add_poll_event(epl, server, ACCEPT, EPOLLIN);
 
 	fprintf(stdout, "[INIT] SOCKET ADDED TO EPOLL\n");
 
 	fprintf(stdout, "[RUNNING] INITIATION SUCCESSFUL\n");
 	while(1){
-		int tasks_count = 0;
-		task_t** tasks = wait_tasks(epl, &tasks_count);
+		int events_count = 0;
+		event_t** evs = wait_events(epl, &events_count);
 
-		if(tasks == NULL) break; 
-		for(int i = 0; i < tasks_count; i++){
-			if(tasks[i]->state == ACCEPT){	
+		if(evs == NULL) break; 
+		for(int i = 0; i < events_count; i++){
+			if(evs[i]->state == ACCEPT){	
 				accept_handler(server, epl);
 				fprintf(stdout, "[RUNNING] CLIENT CONNECTED\n");
 			}
-			else if(tasks[i]->state == CLOSED){
- 				close_handler(epl, tasks[i]);
+			else if(evs[i]->state == CLOSED){
+ 				close_handler(epl, evs[i]);
  				fprintf(stdout, "[RUNNING] CONNECTION CLOSED BY CLIENT\n");
 			}
 			
-			else if(tasks[i]->state == IN){
-				read_handler(tasks[i]);
+			else if(evs[i]->state == IN){
+				read_handler(evs[i]);
 				fprintf(stdout, "[RUNNING] CLIENT SENDED SOMETHING\n");
 			}
 
 			else{
-				free(tasks[i]);
+				free(evs[i]);
 				fprintf(stderr, "ghost socket with wrong state");
 			}
 		}
-		free(tasks);
+		free(evs);
 	}
 	return 0;
 }
