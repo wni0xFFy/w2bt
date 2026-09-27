@@ -14,11 +14,13 @@ int network_main(fd_poll_t* epl, sock_t* server){
 	fprintf(stdout, "[INIT] SOCKET ADDED TO EPOLL\n");
 
 	fprintf(stdout, "[RUNNING] INITIATION SUCCESSFUL\n");
-	while(1){
-		int events_count = 0;
-		event_t** evs = wait_events(epl, &events_count);
 
-		if(evs == NULL) break; 
+	event_t** evs = calloc(epl->max_evs_count, sizeof(event_t*));
+	if(evs == NULL) return -1;
+
+	while(1){
+		int events_count = wait_events(epl, evs);
+
 		for(int i = 0; i < events_count; i++){
 			if(evs[i]->state == ACCEPT){	
 				accept_handler(server, epl);
@@ -39,7 +41,7 @@ int network_main(fd_poll_t* epl, sock_t* server){
 				fprintf(stderr, "ghost socket with wrong state");
 			}
 		}
-		free(evs);
 	}
+	free(evs);
 	return 0;
 }

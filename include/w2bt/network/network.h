@@ -28,7 +28,7 @@ typedef struct{
 fd_poll_t* create_poll(int evs_count, int timeout);
 event_t* add_poll_event(fd_poll_t* epl, sock_t* sc, STATES state, uint32_t event);
 int delete_poll(fd_poll_t* epl);
-event_t** wait_events(fd_poll_t* ep, int* evs_count);
+int wait_events(fd_poll_t* ep, event_t** evs);
 int delete_event(fd_poll_t* epl, event_t* e);
 
 int network_main(fd_poll_t* epl, sock_t* server);

@@ -84,21 +84,17 @@ event_t* add_poll_event(fd_poll_t* epl, sock_t* sc, STATES state, uint32_t event
 	return e;
 }
 
-event_t** wait_events(fd_poll_t* ep, int* event_count){
-	event_t** events = NULL;
+int wait_events(fd_poll_t* ep, event_t** evs){
+	if(ep == NULL || evs == NULL) return -1;
 	int c = epoll_wait(ep->epoll_fd, ep->events_buffer, ep->max_evs_count, ep->timeout);
-	if(c <= 0) return NULL;
-
-	events = malloc(sizeof(event_t*) * c);
-	if(events == NULL) return NULL;
+	if(c <= 0) return -2;
 
 	for(int i = 0; i < c; i++){
-		events[i] = ep->events_buffer[i].data.ptr;
-		if((ep->events_buffer[i].events &~ EPOLLIN) == EPOLLRDHUP) events[i]->state = CLOSED;
+		evs[i] = ep->events_buffer[i].data.ptr;
+		if((ep->events_buffer[i].events &~ EPOLLIN) == EPOLLRDHUP) evs[i]->state = CLOSED;
 	}
 
-	*event_count = c;
-	return events;
+	return c;
 }
 
 int delete_event(fd_poll_t* epl, event_t* t){
