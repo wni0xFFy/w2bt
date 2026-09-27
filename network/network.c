@@ -58,8 +58,7 @@ event_t* add_poll_event(fd_poll_t* epl, sock_t* sc, STATES state, uint32_t event
 	if(epl == NULL || sc == NULL) return NULL;
 	event_t* e = malloc(sizeof(event_t));
 	if(e == NULL) return NULL;
-
-	e->fd = sc->fd;
+	
 	e->state = state;
 	e->data = sc;
 

@@ -10,7 +10,6 @@ typedef enum{
 } STATES;
 
 typedef struct{
-	int fd;
 	void* data;
 	STATES state;
 } event_t;
