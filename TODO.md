@@ -1,4 +1,7 @@
 # TODO
+
+- [ ] rewrite architecture. network should work ONLY with events, transport ONLY READ/WRITE data processing ONLY process data.
+ 
 - [+] recheck network module and update function names(make NORMAL names)
 
 - [+] check memory leaks

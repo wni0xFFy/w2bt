@@ -1,0 +1,340 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"taks",
+				"tasks_lenght"
+			],
+			[
+				"tasks_",
+				"tasks_capacity"
+			],
+			[
+				"event",
+				"events_count"
+			]
+		]
+	},
+	"buffers":
+	[
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"C11",
+				"Set Syntax: C11"
+			],
+			[
+				"Packa",
+				"Package Control: Install Package"
+			],
+			[
+				"codti",
+				"CodeTimeTracker: Open Dashboard"
+			],
+			[
+				"Co",
+				"CodeTimeTracker: Open Dashboard"
+			],
+			[
+				"CODE TRA",
+				"CodeTimeTracker: Open Dashboard"
+			],
+			[
+				"Cod",
+				"CodeTimeTracker: Open Dashboard"
+			],
+			[
+				"COd",
+				"CodeTimeTracker: Open Dashboard"
+			],
+			[
+				"Package Control: ",
+				"Package Control: Enable Package"
+			],
+			[
+				"Package Control: In",
+				"Package Control: Install Package"
+			],
+			[
+				"Install",
+				"Package Control: Install Package"
+			],
+			[
+				"Pack",
+				"Package Control: Remove Package"
+			],
+			[
+				"LSP : Ena",
+				"Preferences: LSP-rust-analyzer Settings"
+			],
+			[
+				"Rust Enchande",
+				"Preferences: Rust Enhanced Settings"
+			],
+			[
+				"LSP ",
+				"Preferences: LSP-rust-analyzer Settings"
+			],
+			[
+				"Preferences LSP",
+				"Preferences: LSP-rust-analyzer Settings"
+			],
+			[
+				"Rust Enca",
+				"Build With: RustEnhanced - Clean"
+			],
+			[
+				"debug",
+				"Rust: Open Debug Log"
+			],
+			[
+				"Debug ",
+				"Package Control: Enable Debug Mode"
+			],
+			[
+				"debu",
+				"Rust: Open Debug Log"
+			],
+			[
+				"COlor",
+				"UI: Select Color Scheme"
+			],
+			[
+				"Theme",
+				"UI: Select Theme"
+			],
+			[
+				"The",
+				"UI: Select Theme"
+			],
+			[
+				"Package ",
+				"Package Control: Install Package"
+			],
+			[
+				"Color",
+				"UI: Select Color Scheme"
+			]
+		],
+		"width": 0.0
+	},
+	"console":
+	{
+		"height": 244.0,
+		"history":
+		[
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"/Users/wni0xffy/proj/w2bt/tests/isAlive.py",
+		"/Users/wni0xffy/proj/w2bt/TODO.md",
+		"/Users/wni0xffy/proj/w2bt/include/w2bt/network/network.h",
+		"/Users/wni0xffy/proj/w2bt/network/network.c",
+		"/Users/wni0xffy/proj/w2bt/network/main_thread.c",
+		"/Users/wni0xffy/proj/w2bt/handlers/handlers.c",
+		"/Users/wni0xffy/proj/w2bt/network/handlers.c",
+		"/Users/wni0xffy/proj/w2bt/include/w2bt/network/handlers.h",
+		"/Users/wni0xffy/proj/w2bt/untitled.sh",
+		"/Users/wni0xffy/proj/w2bt/network/untitled.sh",
+		"/Users/wni0xffy/proj/w2bt/.gitignore",
+		"/Users/wni0xffy/proj/w2bt/make",
+		"/Users/wni0xffy/.zshrc",
+		"/Users/wni0xffy/home/proj/w2bt/TODO.md",
+		"/Users/wni0xffy/home/Multifunctional-calculator-on-C/calc.c",
+		"/Users/wni0xffy/home/proj/w2bt/tests/ping.py",
+		"/Users/wni0xffy/home/proj/w2bt/include/w2bt/network/handlers.h",
+		"/Users/wni0xffy/home/proj/w2bt/network/handlers.c",
+		"/Users/wni0xffy/home/proj/w2bt/include/w2bt/network/network.h",
+		"/Users/wni0xffy/home/proj/w2bt/network/network.c",
+		"/Users/wni0xffy/home/proj/w2bt/network/main_thread.c",
+		"/Users/wni0xffy/home/proj/w2bt/core/socket.c",
+		"/Users/wni0xffy/home/proj/w2bt/docs/core/sockets.md",
+		"/Users/wni0xffy/home/proj/w2bt/docs/handlers.md",
+		"/Users/wni0xffy/home/proj/w2bt/include/w2bt/core/socket.h",
+		"/Users/wni0xffy/home/proj/w2bt/.gitignore",
+		"/Users/wni0xffy/home/proj/w2bt/include/w2bt/socket.h",
+		"/Users/wni0xffy/home/proj/w2bt/include/w2bt/network.h",
+		"/Library/Developer/CommandLineTools/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/Kernel.framework/Versions/A/Headers/i386/cpuid.h",
+		"/Users/wni0xffy/.gitconfig",
+		"/Users/wni0xffy/home/pic/sort.sh",
+		"/Users/wni0xffy/proj/w2bt/include/w2bt/network.h",
+		"/Users/wni0xffy/proj/w2bt/test.c",
+		"/Users/wni0xffy/proj/w2bt/core/socket.c",
+		"/Users/wni0xffy/proj/w2bt/include/w2bt/socket.h",
+		"/Users/wni0xffy/proj/pointers-references-youtube/main.s",
+		"/Users/wni0xffy/proj/pointers-references-youtube/main.cpp",
+		"/Users/wni0xffy/proj/pointers-references-youtube/main.cpp.s",
+		"/Users/wni0xffy/proj/pointers-references-youtube/main.c",
+		"/Users/wni0xffy/proj/pointers-references-youtube/main.rs",
+		"/Users/wni0xffy/proj/StupidLang/src/lexer.rs",
+		"/Users/wni0xffy/proj/StupidLang/syntax",
+		"/Users/wni0xffy/proj/StupidLang/src/main.rs",
+		"/Users/wni0xffy/proj/StupidLang/Cargo.toml",
+		"/Users/wni0xffy/proj/args_lib/src/lib.rs",
+		"/Users/wni0xffy/proj/args_lib/src/main.rs",
+		"/Users/wni0xffy/proj/StupidLang/target/flycheck0/stdout",
+		"/Users/wni0xffy/proj/StupidLang/src/Rust Enhanced Debug Log"
+	],
+	"find":
+	{
+		"height": 67.0
+	},
+	"find_in_files":
+	{
+		"height": 0.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+		],
+		"reverse": false,
+		"scrollbar_highlights": true,
+		"show_context": true,
+		"use_buffer2": true,
+		"use_gitignore": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"sheets":
+			[
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 45.0
+	},
+	"input":
+	{
+		"height": 67.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.LSP Log Panel":
+	{
+		"height": 0.0,
+		"history":
+		[
+		]
+	},
+	"output.diagnostics":
+	{
+		"height": 0.0,
+		"history":
+		[
+		]
+	},
+	"output.find_results":
+	{
+		"height": 0.0,
+		"history":
+		[
+		]
+	},
+	"pinned_build_system": "",
+	"project": "w2bt.sublime-project",
+	"replace":
+	{
+		"height": 86.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+		"lsp_show_inlay_hints": false
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 166.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}

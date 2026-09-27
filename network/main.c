@@ -1,6 +1,6 @@
 #include <w2bt/network/network.h>
 #include <w2bt/core/socket.h>
-#include <w2bt/handlers/handlers.h>
+#include <w2bt/network/handlers.h>
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
@@ -14,7 +14,6 @@ int network_main(fd_poll_t* epl, sock_t* server){
 	fprintf(stdout, "[INIT] SOCKET ADDED TO EPOLL\n");
 
 	fprintf(stdout, "[RUNNING] INITIATION SUCCESSFUL\n");
-	uint8_t buf[256];
 	while(1){
 		int tasks_count = 0;
 		task_t** tasks = wait_tasks(epl, &tasks_count);
@@ -25,13 +24,14 @@ int network_main(fd_poll_t* epl, sock_t* server){
 				accept_handler(server, epl);
 				fprintf(stdout, "[RUNNING] CLIENT CONNECTED\n");
 			}
-			else if(tasks[i]->state == IN){
-				read_handler(tasks[i], buf, 256);
-				fprintf(stdout, "[RUNNING] CLIENT SENDED SOMETHING\n");
-			}
 			else if(tasks[i]->state == CLOSED){
  				close_handler(epl, tasks[i]);
  				fprintf(stdout, "[RUNNING] CONNECTION CLOSED BY CLIENT\n");
+			}
+			
+			else if(tasks[i]->state == IN){
+				read_handler(tasks[i]);
+				fprintf(stdout, "[RUNNING] CLIENT SENDED SOMETHING\n");
 			}
 
 			else{

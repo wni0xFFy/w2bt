@@ -1,4 +1,4 @@
-#include <w2bt/handlers/handlers.h>
+#include <w2bt/network/handlers.h>
 #include <w2bt/core/socket.h>
 #include <w2bt/network/network.h>
 #include <stdio.h>
@@ -14,10 +14,7 @@ int accept_handler(sock_t* serv, fd_poll_t* epfd){
 	return 0;
 }
 
-int read_handler(task_t* t, uint8_t* buffer, int size){
-	if(t->state == CLOSED) fprintf(stdout, "wtf\n");
-	int readed = receive_socket(t->data, buffer, size, 0);
-	if(readed < size) return 1;
+int read_handler(task_t* t){
 	return 0;
 }
 
