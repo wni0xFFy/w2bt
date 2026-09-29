@@ -22,17 +22,23 @@ int push_front(queue_t* qe, void* ptr){
 	nd->next = qe->start->next;
 	qe->start->next = nd;
 	qe->nodes_count++;
+
+	return 0;
 }
 
 void* pop_back(queue_t* qe){
-	node_t* tmp = qe->start->next;
-	for(uint32_t i = 0; i <= qe->nodes_count; i++){
-		if(tmp->next->next == NULL){
-			void* ptr = tmp->next->ptr;
-			qe->nodes_count--;
-			tmp->next = NULL;
-			return ptr;
-		}
-		tmp = tmp->next;
-	}
+	if(qe->nodes_count == 0) return NULL;
+
+	node_t* tmp = qe->start;
+	void* return_ptr = NULL;
+
+	//getting PRE-END node
+	for(uint32_t i = 0; i < qe->nodes_count - 1; i++) tmp = tmp->next;
+
+	return_ptr = tmp->next->ptr;
+	free(tmp->next);
+	tmp->next = NULL;
+	qe->nodes_count--;
+
+	return return_ptr;
 }
