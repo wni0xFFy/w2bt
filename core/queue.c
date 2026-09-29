@@ -1,7 +1,8 @@
-#include <w2bt/transport/queue.h>
+#include <w2bt/core/queue.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <stdio.h>
+
 queue_t* create_queue(){
 	queue_t* qe = calloc(1, sizeof(queue_t));
 	if(qe == NULL) return NULL;

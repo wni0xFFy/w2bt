@@ -1,14 +1,15 @@
 #pragma once 
 #include <stdint.h>
 #include <w2bt/core/socket.h>
-
+#include <w2bt/core/queue.h>
 typedef enum{
 	IN,
 	OUT, 
 	ACCEPT,
 	CLOSED,
+	PROGRESS,
 } STATES;
-
+ 
 typedef struct{
 	void* data;
 	STATES state;
@@ -30,4 +31,4 @@ int delete_poll(fd_poll_t* epl);
 int wait_events(fd_poll_t* ep, event_t** evs);
 int delete_event(fd_poll_t* epl, event_t* e);
 
-int network_main(fd_poll_t* epl, sock_t* server);
+int network_main(fd_poll_t* epl, sock_t* server, queue_t* qe);

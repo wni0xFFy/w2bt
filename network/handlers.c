@@ -1,6 +1,8 @@
 #include <w2bt/network/handlers.h>
-#include <w2bt/core/socket.h>
 #include <w2bt/network/network.h>
+#include <w2bt/core/socket.h>
+#include <w2bt/core/queue.h>
+#include <w2bt/transport/task.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/epoll.h>
@@ -14,7 +16,23 @@ int accept_handler(sock_t* serv, fd_poll_t* epfd){
 	return 0;
 }
 
-int read_handler(event_t* e){
+int read_handler(event_t* e, queue_t* qe){
+	task_t* t = malloc(sizeof(task_t));
+	t->sc = (sock_t*)e->data;
+	t->buffer = NULL;
+	t->function = READ;
+	e->state = PROGRESS;
+	push_front(qe, t);
+	return 0;
+}
+
+int write_handler(event_t* e, queue_t* qe){
+	task_t* t = malloc(sizeof(task_t));
+	t->sc = (sock_t*)e->data;
+	t->buffer = NULL;
+	t->function = WRITE;
+	e->state = PROGRESS;
+	push_front(qe, t);
 	return 0;
 }
 

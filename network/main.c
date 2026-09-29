@@ -7,7 +7,7 @@
 #include <string.h>
 #include <sys/epoll.h>
 
-int network_main(fd_poll_t* epl, sock_t* server){
+int network_main(fd_poll_t* epl, sock_t* server, queue_t* qe){
 	setbuf(stdout, NULL);
 	add_poll_event(epl, server, ACCEPT, EPOLLIN);
 
@@ -32,10 +32,16 @@ int network_main(fd_poll_t* epl, sock_t* server){
 			}
 			
 			else if(evs[i]->state == IN){
-				read_handler(evs[i]);
+				read_handler(evs[i], qe);
 				fprintf(stdout, "[RUNNING] CLIENT SENDED SOMETHING\n");
 			}
 
+			else if(evs[i]->state == OUT){
+				write_handler(evs[i], qe);
+				fprintf(stdout, "[RUNNING] CLIENT READED SOMETHING\n");
+			}
+
+			else if(evs[i]->state == PROGRESS);
 			else{
 				free(evs[i]);
 				fprintf(stderr, "ghost socket with wrong state");
