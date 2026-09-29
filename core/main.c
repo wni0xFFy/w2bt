@@ -46,5 +46,6 @@ int main(){
 	//waiting
 	pthread_join(network_main_thread, NULL);
 	//Cleaning
+
 	delete_poll(epl);	
 }
