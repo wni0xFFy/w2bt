@@ -1,5 +1,0 @@
-typedef enum{
-	STOP_SERVER;
-	START_SERVER;
-	KILL_SERVER;
-} SIGNALS;
