@@ -3,6 +3,11 @@
 #include <stdint.h>
 #include <pthread.h>
 
+typedef enum{
+	LOCK,
+	NONBLOCK,
+} queue_param_t;
+
 typedef struct node_t{
 	void* ptr;
 	struct node_t* next;
@@ -17,5 +22,5 @@ typedef struct {
 queue_t* create_queue();
 int destroy_queue(queue_t* q);
 
-int push_queue(queue_t* qe, void* ptr);
-void* pop_queue(queue_t* qe);
+int push_queue(queue_t* qe, void* ptr, queue_param_t param);
+void* pop_queue(queue_t* qe, queue_param_t param);

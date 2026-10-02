@@ -1,5 +1,5 @@
-#include <w2bt/network/network.h>
-#include <w2bt/core/socket.h>
+#include <event_core/poll.h>
+#include <core/socket.h>
 #include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -44,7 +44,7 @@ int delete_poll(fd_poll_t* epl){
 	/*POTENTIAL BUG here it can exit from function and doesn't free() memory*/	
 	if(e == -1) return -1;
 	for(uint32_t i = 0; i < epl->evs_lenght; i++){
-		destroy_socket(epl->evs[i]->data);
+		destroy_socket(epl->evs[i]->sc);
 		free(epl->evs[i]);
 	}
 
@@ -54,13 +54,13 @@ int delete_poll(fd_poll_t* epl){
 	return 0;
 }
 
-event_t* add_poll_event(fd_poll_t* epl, sock_t* sc, STATES state, uint32_t event){
-	if(epl == NULL || sc == NULL) return NULL;
+event_t* add_poll_event(fd_poll_t* epl, sock_t* sc, STATES state){
+	if(epl == NULL) return NULL;
 	event_t* e = malloc(sizeof(event_t));
 	if(e == NULL) return NULL;
 	
 	e->state = state;
-	e->data = sc;
+	e->sc = sc;
 
 	if(epl->evs_lenght + 1 >= epl->evs_capacity){
 		event_t** tmp = realloc(epl->evs, (epl->evs_capacity + 5) * sizeof(event_t*));
@@ -76,7 +76,9 @@ event_t* add_poll_event(fd_poll_t* epl, sock_t* sc, STATES state, uint32_t event
 	epl->evs_lenght += 1;
 
 	struct epoll_event ev;
-	ev.events = event;
+	if(state == READABLE || state == ACCEPTABLE) ev.events = EPOLLIN | EPOLLRDHUP;
+	else if(state == WRITABLE) ev.events = EPOLLOUT | EPOLLRDHUP;
+ 	else ev.events = 0;
 	ev.data.ptr = e;
 
 	if(epoll_ctl(epl->epoll_fd, EPOLL_CTL_ADD, sc->fd, &ev)) return NULL;
@@ -90,7 +92,7 @@ int wait_events(fd_poll_t* ep, event_t** evs){
 
 	for(int i = 0; i < c; i++){
 		evs[i] = ep->events_buffer[i].data.ptr;
-		if((ep->events_buffer[i].events &~ EPOLLIN) == EPOLLRDHUP) evs[i]->state = CLOSED;
+		if((ep->events_buffer[i].events &~ EPOLLIN) == EPOLLRDHUP) evs[i]->state = CLOSABLE;
 	}
 
 	return c;
@@ -98,7 +100,7 @@ int wait_events(fd_poll_t* ep, event_t** evs){
 
 int delete_event(fd_poll_t* epl, event_t* t){
 	int is_deleting = 0;
-	for(uint32_t i = 1; i < epl->evs_lenght; i++){
+	for(uint32_t i = 0; i < epl->evs_lenght; i++){
 		if(epl->evs[i] == t){
 			is_deleting = 1;
 		}
@@ -107,7 +109,7 @@ int delete_event(fd_poll_t* epl, event_t* t){
 	}
 	if(!is_deleting) return -1;
 	epl->evs_lenght -= 1;
-	destroy_socket(t->data);
+	if(epoll_ctl(epl->epoll_fd, EPOLL_CTL_DEL, t->sc->fd, NULL) == -1) return -1;
 	free(t);
 	return 0;
 }
