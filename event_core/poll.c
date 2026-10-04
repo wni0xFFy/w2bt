@@ -54,13 +54,15 @@ int delete_poll(fd_poll_t* epl){
 	return 0;
 }
 
-event_t* add_poll_event(fd_poll_t* epl, sock_t* sc, STATES state){
+event_t* add_poll_event(fd_poll_t* epl, sock_t* sc, STATES state, int fd){
 	if(epl == NULL) return NULL;
+	//if(sc == NULL) return NULL;
 	event_t* e = malloc(sizeof(event_t));
 	if(e == NULL) return NULL;
 	
 	e->state = state;
 	e->sc = sc;
+	e->fd = fd;
 
 	if(epl->evs_lenght + 1 >= epl->evs_capacity){
 		event_t** tmp = realloc(epl->evs, (epl->evs_capacity + 5) * sizeof(event_t*));
@@ -81,7 +83,9 @@ event_t* add_poll_event(fd_poll_t* epl, sock_t* sc, STATES state){
  	else ev.events = 0;
 	ev.data.ptr = e;
 
-	if(epoll_ctl(epl->epoll_fd, EPOLL_CTL_ADD, sc->fd, &ev)) return NULL;
+	int ofd = fd;	
+	if(fd == 0)  ofd = sc->fd;
+	if(epoll_ctl(epl->epoll_fd, EPOLL_CTL_ADD, ofd, &ev)) return NULL;
 	return e;
 }
 

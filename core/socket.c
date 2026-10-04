@@ -37,6 +37,9 @@ sock_t* create_socket(int port, int backlog){
     }
     s->fd = fd;
     s->settings = settings;
+    int enable = 1;
+
+    setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(int));
 
     return s;
 }
@@ -60,6 +63,9 @@ sock_t* accept_socket(sock_t* self){
 		free(client);
 		return NULL;
 	}
+	int enable = 1;
+
+    setsockopt(client->fd, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(int));
 
 	return client;
 }

@@ -4,8 +4,9 @@
 #include <stdio.h>
 #include <pthread.h>
 #include <unistd.h>
+#include <sys/eventfd.h>
 
-queue_t* create_queue(){
+queue_t* create_queue(int is_event){
 	queue_t* qe = calloc(1, sizeof(queue_t));
 	if(qe == NULL) return NULL;
 
@@ -13,6 +14,9 @@ queue_t* create_queue(){
 	qe->start = calloc(1, sizeof(node_t));
 	qe->start->next = NULL;
 	qe->start->ptr = NULL;
+	if(is_event) qe->wakeup_fd = eventfd(0, EFD_NONBLOCK);
+	else qe->wakeup_fd = 0;
+
 	pthread_mutex_init(&qe->mtx, NULL);
 	return qe;
 }
@@ -36,9 +40,10 @@ int push_queue(queue_t* qe, void* ptr, queue_param_t param){
 	nd->next = qe->start->next;
 	qe->start->next = nd;
 	qe->nodes_count++;
+	uint64_t active = 1;
+	if(qe->wakeup_fd != 0) write(qe->wakeup_fd, &active, sizeof(uint64_t));
 
 	pthread_mutex_unlock(&qe->mtx);
-
 	return 0;
 }
 
@@ -61,6 +66,9 @@ void* pop_queue(queue_t* qe, queue_param_t param){
 	free(tmp->next);
 	tmp->next = NULL;
 	qe->nodes_count--;	
+	
+	uint64_t active = 0;
+	if(qe->wakeup_fd != 0) write(qe->wakeup_fd, &active, sizeof(uint64_t));
 	pthread_mutex_unlock(&qe->mtx);
 
 	return return_ptr;

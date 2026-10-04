@@ -1,0 +1,13 @@
+typedef struct connection_t{
+	sock_t* sc; 
+	uint8_t* input;
+	uint8_t* output;
+	int32_t ttl;
+	STATE mode; 
+	int worker_id;
+}
+
+typedef struct package{
+	uint8_t* data;
+	connection_t* 
+}

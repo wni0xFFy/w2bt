@@ -11,6 +11,7 @@ typedef enum{
 } STATES;
  
 typedef struct{
+	int fd;
 	sock_t* sc;
 	STATES state;
 } event_t;
@@ -26,9 +27,9 @@ typedef struct{
 } fd_poll_t;
 
 fd_poll_t* create_poll(int evs_count, int timeout);
-event_t* add_poll_event(fd_poll_t* epl, sock_t* sc, STATES state);
+event_t* add_poll_event(fd_poll_t* epl, sock_t* sc, STATES state, int fd);
 int delete_poll(fd_poll_t* epl);
 int wait_events(fd_poll_t* ep, event_t** evs);
 int delete_event(fd_poll_t* epl, event_t* e);
 
-int event_main(fd_poll_t* epl, queue_t* qe);
+int event_main(sock_t* server, fd_poll_t* epl, queue_t* output, queue_t* input);
