@@ -14,29 +14,21 @@ int event_main(sock_t* server, fd_poll_t* epl, queue_t* output, queue_t* input){
 
 	while(1){
 		int c = wait_events(epl, evs);
-		for(int i = 0; i < c; i++) {	
-			if(evs[i]->fd == input->wakeup_fd){
-				event_t* ev = pop_queue(input, LOCK);
-				if(ev != NULL){
-					if(add_poll_event(epl, ev->sc, ev->state, 0) != NULL) fprintf(stderr, "client on port %d\n", ev->sc->fd);
-				}	
+		for(int i = 0; i < c; i++) {
+			if(evs[i]->fd != input->wakeup_fd){
+				if(evs[i]->state == ACCEPTABLE) {fprintf(stderr, "hi bitcha");}
+				push_queue(output, evs[i], LOCK);
+				fprintf(stderr, "\nwrong events count : %d\n", output->nodes_count);
+				
 				continue;
 			}
+			fprintf(stderr, "\nevents count : %d\n", input->nodes_count);
 
-			switch(evs[i]->state){
-				case CLOSABLE:
-					fprintf(stderr, "close\n");
-					destroy_socket(evs[i]->sc);
-					delete_event(epl, evs[i]);
-					break;	
-				case ACCEPTABLE:
-					fprintf(stderr, "accept\n");
-					sock_t* client = accept_socket(server);
-					add_poll_event(epl, client, READABLE, 0);
-					break;
-			}
+			event_t* ev = pop_queue(input, NONBLOCK); //THIS SHIT EQUAL TO NULL IDK WHY
+			if(ev == NULL) continue;	
 
- 			//push_queue(output, evs[i], LOCK);
+			if(ev->state == READABLE){add_poll_event(epl, ev->sc, READABLE, 0, EPOLLONESHOT); fprintf(stdout, "connected.");}
+			if(ev->state == CLOSABLE) delete_event(epl, ev);
 		}
 
 	}

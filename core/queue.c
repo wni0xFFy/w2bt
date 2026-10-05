@@ -66,11 +66,15 @@ void* pop_queue(queue_t* qe, queue_param_t param){
 	free(tmp->next);
 	tmp->next = NULL;
 	qe->nodes_count--;	
-	
-	uint64_t active = 0;
-	if(qe->wakeup_fd != 0) write(qe->wakeup_fd, &active, sizeof(uint64_t));
-	pthread_mutex_unlock(&qe->mtx);
+		
+	if(return_ptr == NULL) return_ptr = (void*)0xDEADBEEF;
 
+	if(qe->wakeup_fd != 0){
+		uint64_t u;
+		read(qe->wakeup_fd, &u, sizeof(uint64_t));
+	}
+	
+	pthread_mutex_unlock(&qe->mtx);
 	return return_ptr;
 }
 

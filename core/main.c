@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <pthread.h>
+#include <sys/epoll.h>
 
 //helper structs(for threads's workers)
 typedef struct {
@@ -40,48 +41,52 @@ int main(){
      
 	queue_t* qe = create_queue(1);
 	queue_t* eqe = create_queue(1);
+
 	network_args args = {0};
 
 	args.epl = epl;
 	args.qe = qe;
 	args.eqe = eqe;
 	args.srv = server;
-	add_poll_event(epl, server, ACCEPTABLE, 0);
-	add_poll_event(epl, NULL, READABLE, eqe->wakeup_fd);
-	add_poll_event(epl, NULL, READABLE, qe->wakeup_fd);
+
+	add_poll_event(epl, server, ACCEPTABLE, 0, 0);
+	add_poll_event(epl, NULL, READABLE, eqe->wakeup_fd, 0);
 
 	pthread_create(&network_main_thread, NULL, network_worker, &args);
 	printf("[Network] Started.\n");
 
-	fd_poll_t* events_poll = create_poll(15, 30000);
-	add_poll_event(events_poll, NULL, READABLE, qe->wakeup_fd);
+	fd_poll_t* events_poll = create_poll(15, 10);
+	add_poll_event(events_poll, NULL, READABLE, qe->wakeup_fd,0);
 	event_t** evs = calloc(events_poll->max_evs_count, sizeof(event_t*));
 	if(evs == NULL) return -1;
 
 	while(1){
 		int c = wait_events(events_poll, evs);
 		if(c < 1) continue;
-		event_t* ev = pop_queue(qe, NONBLOCK);
+		event_t* ev = pop_queue(qe, LOCK);
 		if(ev == NULL) continue;
 
-		fprintf(stderr, "\nNow processing event on socket : ");
-		sock_t* client;
+		event_t* eev;
 		switch(ev->state){
-			case READABLE:
+			case CLOSABLE: 
 				fprintf(stderr, "close\n");
+				eev = malloc(sizeof(event_t)); 
+				eev->sc = ev->sc;
+				eev->state = CLOSABLE;	
 				destroy_socket(ev->sc);
-				delete_event(epl, ev);
+				push_queue(eqe, eev, LOCK); 
 				break;	
 			case ACCEPTABLE:
 				fprintf(stderr, "accept\n");
-				client = accept_socket(server);
-				event_t* eev = malloc(sizeof(event_t)); 
+				sock_t* client = accept_socket(server);
+				eev = malloc(sizeof(event_t)); 
 				eev->sc = client;
-				eev->state = READABLE;
-				push_queue(eqe, eev, LOCK); 
+				eev->state = READABLE;	
+				if(push_queue(eqe, eev, LOCK) != 0) fprintf(stderr, "helsinki"); 
 				//destroy_socket(client);
 				break;
 		}
+		fprintf(stdout, " and WHERE %d\n", ev->state);
 	}
 	free(evs);
 	//waiting

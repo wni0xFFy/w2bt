@@ -54,7 +54,7 @@ int delete_poll(fd_poll_t* epl){
 	return 0;
 }
 
-event_t* add_poll_event(fd_poll_t* epl, sock_t* sc, STATES state, int fd){
+event_t* add_poll_event(fd_poll_t* epl, sock_t* sc, STATES state, int fd, uint32_t mask){
 	if(epl == NULL) return NULL;
 	//if(sc == NULL) return NULL;
 	event_t* e = malloc(sizeof(event_t));
@@ -78,8 +78,8 @@ event_t* add_poll_event(fd_poll_t* epl, sock_t* sc, STATES state, int fd){
 	epl->evs_lenght += 1;
 
 	struct epoll_event ev;
-	if(state == READABLE || state == ACCEPTABLE) ev.events = EPOLLIN | EPOLLRDHUP;
-	else if(state == WRITABLE) ev.events = EPOLLOUT | EPOLLRDHUP;
+	if(state == READABLE || state == ACCEPTABLE) ev.events = EPOLLIN | mask | EPOLLRDHUP;
+	else if(state == WRITABLE) ev.events = EPOLLOUT | mask | EPOLLRDHUP;
  	else ev.events = 0;
 	ev.data.ptr = e;
 

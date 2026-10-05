@@ -4,7 +4,7 @@
 #include <core/queue.h>
 
 typedef enum{
-	READABLE,
+	READABLE = 1,
 	WRITABLE, 
 	ACCEPTABLE,
 	CLOSABLE,
@@ -27,7 +27,7 @@ typedef struct{
 } fd_poll_t;
 
 fd_poll_t* create_poll(int evs_count, int timeout);
-event_t* add_poll_event(fd_poll_t* epl, sock_t* sc, STATES state, int fd);
+event_t* add_poll_event(fd_poll_t* epl, sock_t* sc, STATES state, int fd, uint32_t mask);
 int delete_poll(fd_poll_t* epl);
 int wait_events(fd_poll_t* ep, event_t** evs);
 int delete_event(fd_poll_t* epl, event_t* e);
