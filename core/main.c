@@ -18,7 +18,7 @@ typedef struct {
 void* network_worker(void* args){
 	network_args* arg = args;
 	fd_poll_t* epl = arg->epl;
-	queue_t* qe = arg->qe;
+	queue_t* qe = arg->qe; 
 	queue_t* eqe = arg->eqe;
 	sock_t* srv = arg->srv;
 	event_main(srv, epl, qe, eqe);
@@ -76,17 +76,7 @@ int main(){
 				destroy_socket(ev->sc);
 				push_queue(eqe, eev, LOCK); 
 				break;	
-			case ACCEPTABLE:
-				fprintf(stderr, "accept\n");
-				sock_t* client = accept_socket(server);
-				eev = malloc(sizeof(event_t)); 
-				eev->sc = client;
-				eev->state = READABLE;	
-				if(push_queue(eqe, eev, LOCK) != 0) fprintf(stderr, "helsinki"); 
-				//destroy_socket(client);
-				break;
 		}
-		fprintf(stdout, " and WHERE %d\n", ev->state);
 	}
 	free(evs);
 	//waiting

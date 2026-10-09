@@ -44,6 +44,7 @@ int push_queue(queue_t* qe, void* ptr, queue_param_t param){
 	if(qe->wakeup_fd != 0) write(qe->wakeup_fd, &active, sizeof(uint64_t));
 
 	pthread_mutex_unlock(&qe->mtx);
+
 	return 0;
 }
 
