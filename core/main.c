@@ -89,6 +89,7 @@ int main(){
 				int readed = receive_socket(ev->sc, buffer, 16, 0);
 				buffer[readed] = '\0';
 				fprintf(stderr, "from client : %s\n", buffer);
+				send_socket(ev->sc, buffer, 16, 0);
 				ev->active = 0;
 				if(strcmp(buffer, "stop\n") == 0){
 					fprintf(stderr, "stop");

@@ -7,8 +7,7 @@ typedef enum{
 	READABLE = 1,
 	WRITABLE, 
 	ACCEPTABLE,
-	CLOSABLE,
-	CLOSE_THREAD, 	
+	CLOSABLE,	
 } STATES;
  
 typedef struct{

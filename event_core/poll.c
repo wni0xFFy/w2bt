@@ -128,4 +128,5 @@ int event_up(fd_poll_t* epl, event_t* e, uint32_t mask){
  	ev.data.ptr = e;
  	e->active = 1;
  	if(epoll_ctl(epl->epoll_fd, EPOLL_CTL_MOD, e->sc->fd, &ev) == -1) return -1;
+ 	return 0;
 }
