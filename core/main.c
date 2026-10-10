@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <pthread.h>
 #include <sys/epoll.h>
-#include <unistd.h>
+#include <string.h>
 //helper structs(for threads's workers)
 typedef struct {
 	fd_poll_t* epl;
@@ -60,7 +60,8 @@ int main(){
 	event_t** evs = calloc(events_poll->max_evs_count, sizeof(event_t*));
 	if(evs == NULL) return -1;
 
-	while(1){
+	int running = 1;
+	while(running){
 		int c = wait_events(events_poll, evs);
 		if(c < 1) continue;
 		event_t* ev = pop_queue(qe, LOCK);
@@ -69,7 +70,6 @@ int main(){
 		event_t* eev;
 
 		switch(ev->state){
-			
 			case CLOSABLE:
 				fprintf(stderr, "close\n");
 				eev = malloc(sizeof(event_t)); 
@@ -81,10 +81,16 @@ int main(){
 				break;	
 			case READABLE:
 				char buffer[256] = {0};
-				receive_socket(ev->sc, buffer, 16, 0);
-				buffer[255] = '\0';
+				int readed = receive_socket(ev->sc, buffer, 16, 0);
+				buffer[readed] = '\0';
 				fprintf(stderr, "from client : %s\n", buffer);
 				ev->active = 0;
+				if(strcmp(buffer, "stop\n") == 0){
+					fprintf(stderr, "stop");
+					ev->state = CLOSE_THREAD;
+					ev->active = 1;
+					running = 0; 	
+				}
 				push_queue(eqe, ev, LOCK); 
 				break;
 		}
@@ -93,6 +99,6 @@ int main(){
 	//waiting
 	pthread_join(network_main_thread, NULL);
 	//Cleaning
-	delete_poll(epl);	
+	//delete_poll(epl);	
 	destroy_socket(server);
 }

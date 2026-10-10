@@ -22,6 +22,10 @@ sock_t* create_socket(int port, int backlog){
 	settings.sin_addr.s_addr = INADDR_ANY;
 	settings.sin_port = htons(port);
 
+	int enable = 1;
+
+    setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(int));
+
 	int err = bind(fd, (struct sockaddr*)&settings, sizeof(settings));
     if(err == -1) {
     	free(s);
@@ -37,9 +41,7 @@ sock_t* create_socket(int port, int backlog){
     }
     s->fd = fd;
     s->settings = settings;
-    int enable = 1;
-
-    setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(int));
+    
 
     return s;
 }
