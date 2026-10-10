@@ -17,6 +17,7 @@ typedef struct{
 	int fd;
 	sock_t* sc;
 	STATES state;
+	uint8_t active;
 } event_t;
 
 typedef struct{

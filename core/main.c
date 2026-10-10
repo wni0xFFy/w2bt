@@ -65,25 +65,17 @@ int main(){
 		if(c < 1) continue;
 		event_t* ev = pop_queue(qe, LOCK);
 		if(ev == NULL) continue;
-		//create some extra states for avoid data races.
+
 		event_t* eev;
+
 		switch(ev->state){
-			// case ACCEPTABLE:
-			// 	ev->state == ACCEPTING;
-			// 	fprintf(stderr, "accept\n");
-			// 	sock_t* client = accept_socket(server);
-			// 	eev = malloc(sizeof(event_t)); 
-			// 	eev->sc = client;
-			// 	eev->state = READABLE;	
-			// 	if(push_queue(eqe, eev, LOCK) != 0) fprintf(stderr, "Helsinki\n"); 
-			// 	if(push_queue(eqe, ev, LOCK) != 0) fprintf(stderr, "Helsinki\n");
-			// 	break;
 			
 			case CLOSABLE:
 				fprintf(stderr, "close\n");
 				eev = malloc(sizeof(event_t)); 
 				eev->sc = ev->sc;
 				eev->state = CLOSABLE;	
+				eev->active = 1;
 				destroy_socket(ev->sc);
 				push_queue(eqe, eev, LOCK); 
 				break;	
@@ -92,7 +84,7 @@ int main(){
 				receive_socket(ev->sc, buffer, 16, 0);
 				buffer[255] = '\0';
 				fprintf(stderr, "from client : %s\n", buffer);
-				ev->state = READING;
+				ev->active = 0;
 				push_queue(eqe, ev, LOCK); 
 				break;
 		}

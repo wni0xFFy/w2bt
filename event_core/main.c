@@ -22,28 +22,19 @@ int event_main(sock_t* server, fd_poll_t* epl, queue_t* output, queue_t* input){
 					event_t* eev = malloc(sizeof(event_t)); 
 					eev->sc = client;
 					eev->state = READABLE;	
+					eev->active = 1;
 					if(push_queue(input, eev, LOCK) != 0) fprintf(stderr, "Helsinki\n"); 
 					continue; 
 				}
-				else if(evs[i]->state == CLOSING) fprintf(stderr, "it works.. why?");
 				push_queue(output, evs[i], LOCK); 
 			}
 
 			event_t* ev = pop_queue(input, NONBLOCK); 
 			if(ev == NULL) continue;	
 
-			if(ev->state == READABLE){add_poll_event(epl, ev->sc, READABLE, 0, EPOLLONESHOT); fprintf(stdout, "connected.\n");}
+			if(ev->active == 0) event_up(epl, ev, EPOLLONESHOT);
+			else if(ev->state == READABLE){add_poll_event(epl, ev->sc, READABLE, 0, EPOLLONESHOT); fprintf(stdout, "connected.\n");}
 			else if(ev->state == CLOSABLE){delete_event(epl, ev); fprintf(stderr, "closed\n");}
-			/*ev->state > CLOSABLE because everything that's bigger than closable is processing states(see poll.h)*/
-			else if(ev->state == READING){
-				ev->state = READABLE; 
-				event_up(epl, ev, EPOLLONESHOT);
-			}
-
-			else if(ev->state == ACCEPTING){
-				ev->state = ACCEPTING; 
-				event_up(epl, ev, EPOLLONESHOT);
-			}
 		}
 
 	}

@@ -62,8 +62,9 @@ event_t* add_poll_event(fd_poll_t* epl, sock_t* sc, STATES state, int fd, uint32
 	
 	e->state = state;
 	e->sc = sc;
-	e->fd = fd;
-
+	e->fd = fd;	
+	e->active = 1;
+	
 	if(epl->evs_lenght + 1 >= epl->evs_capacity){
 		event_t** tmp = realloc(epl->evs, (epl->evs_capacity + 5) * sizeof(event_t*));
 		if(tmp == NULL){
@@ -125,6 +126,6 @@ int event_up(fd_poll_t* epl, event_t* e, uint32_t mask){
  	else ev.events = 0;
 
  	ev.data.ptr = e;
-
+ 	e->active = 1;
  	if(epoll_ctl(epl->epoll_fd, EPOLL_CTL_MOD, e->sc->fd, &ev) == -1) return -1;
 }
