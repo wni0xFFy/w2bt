@@ -15,7 +15,7 @@ int event_main(sock_t* server, fd_poll_t* epl, queue_t* output, queue_t* input){
 	while(1){
 		int c = wait_events(epl, evs);
 		for(int i = 0; i < c; i++) {
-			if(evs[i]->fd != input->wakeup_fd){
+			if(evs[i]->fd != input->wakeup_fd){ 
 				if(evs[i]->state == ACCEPTABLE) {
 					fprintf(stderr, "accept\n");
 					sock_t* client = accept_socket(server);
@@ -25,16 +25,25 @@ int event_main(sock_t* server, fd_poll_t* epl, queue_t* output, queue_t* input){
 					if(push_queue(input, eev, LOCK) != 0) fprintf(stderr, "Helsinki\n"); 
 					continue; 
 				}
+				else if(evs[i]->state == CLOSING) fprintf(stderr, "it works.. why?");
 				push_queue(output, evs[i], LOCK); 
-				
-				continue;
 			}
 
 			event_t* ev = pop_queue(input, NONBLOCK); 
 			if(ev == NULL) continue;	
 
 			if(ev->state == READABLE){add_poll_event(epl, ev->sc, READABLE, 0, EPOLLONESHOT); fprintf(stdout, "connected.\n");}
-			if(ev->state == CLOSABLE){delete_event(epl, ev); fprintf(stderr, "closed\n");}
+			else if(ev->state == CLOSABLE){delete_event(epl, ev); fprintf(stderr, "closed\n");}
+			/*ev->state > CLOSABLE because everything that's bigger than closable is processing states(see poll.h)*/
+			else if(ev->state == READING){
+				ev->state = READABLE; 
+				event_up(epl, ev, EPOLLONESHOT);
+			}
+
+			else if(ev->state == ACCEPTING){
+				ev->state = ACCEPTING; 
+				event_up(epl, ev, EPOLLONESHOT);
+			}
 		}
 
 	}

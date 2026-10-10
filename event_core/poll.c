@@ -117,3 +117,14 @@ int delete_event(fd_poll_t* epl, event_t* t){
 	free(t);
 	return 0;
 }
+
+int event_up(fd_poll_t* epl, event_t* e, uint32_t mask){
+	struct epoll_event ev;
+	if(e->state == READABLE || e->state == ACCEPTABLE) ev.events = EPOLLIN | mask | EPOLLRDHUP;
+	else if(e->state == WRITABLE) ev.events = EPOLLOUT | mask | EPOLLRDHUP;
+ 	else ev.events = 0;
+
+ 	ev.data.ptr = e;
+
+ 	if(epoll_ctl(epl->epoll_fd, EPOLL_CTL_MOD, e->sc->fd, &ev) == -1) return -1;
+}
