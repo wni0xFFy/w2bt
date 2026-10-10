@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <pthread.h>
 #include <sys/epoll.h>
+#include <core/commands.h>
 #include <string.h>
 //helper structs(for threads's workers)
 typedef struct {
@@ -12,6 +13,7 @@ typedef struct {
 	queue_t* qe;
 	queue_t* eqe;
 	sock_t* srv;
+	queue_t* qel;
 } network_args;
 
 //workers
@@ -20,8 +22,9 @@ void* network_worker(void* args){
 	fd_poll_t* epl = arg->epl;
 	queue_t* qe = arg->qe; 
 	queue_t* eqe = arg->eqe;
+	queue_t* qel = arg->qel;
 	sock_t* srv = arg->srv;
-	event_main(srv, epl, qe, eqe);
+	event_main(srv, epl, qe, eqe, qel);
 	return 0;
 }
 
@@ -41,16 +44,18 @@ int main(){
      
 	queue_t* qe = create_queue(1);
 	queue_t* eqe = create_queue(1);
-
+	queue_t* commands = create_queue(1);
 	network_args args = {0};
 
 	args.epl = epl;
 	args.qe = qe;
 	args.eqe = eqe;
 	args.srv = server;
+	args.qel = commands;
 
 	add_poll_event(epl, server, ACCEPTABLE, 0, 0);
 	add_poll_event(epl, NULL, READABLE, eqe->wakeup_fd, 0);
+	add_poll_event(epl, NULL, READABLE, commands->wakeup_fd, 0);
 
 	pthread_create(&network_main_thread, NULL, network_worker, &args);
 	printf("[Network] Started.\n");
@@ -87,9 +92,10 @@ int main(){
 				ev->active = 0;
 				if(strcmp(buffer, "stop\n") == 0){
 					fprintf(stderr, "stop");
-					ev->state = CLOSE_THREAD;
-					ev->active = 1;
-					running = 0; 	
+					command_t* cmd = malloc(sizeof(command_t));
+					cmd->command = SHUTDOWN;	
+					push_queue(commands, cmd, LOCK);
+					running = 0;
 				}
 				push_queue(eqe, ev, LOCK); 
 				break;

@@ -8,7 +8,7 @@ typedef enum{
 	WRITABLE, 
 	ACCEPTABLE,
 	CLOSABLE,
-	CLOSE_THREAD,
+	CLOSE_THREAD, 	
 } STATES;
  
 typedef struct{
@@ -35,4 +35,4 @@ int wait_events(fd_poll_t* ep, event_t** evs);
 int delete_event(fd_poll_t* epl, event_t* e);
 int event_up(fd_poll_t* epl, event_t* e, uint32_t mask);
 
-int event_main(sock_t* server, fd_poll_t* epl, queue_t* output, queue_t* input);
+int event_main(sock_t* server, fd_poll_t* epl, queue_t* output, queue_t* input, queue_t* command_queue);
