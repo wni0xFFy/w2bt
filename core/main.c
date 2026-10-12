@@ -7,24 +7,21 @@
 #include <sys/epoll.h>
 #include <core/commands.h>
 #include <string.h>
+#include <unistd.h>
 //helper structs(for threads's workers)
+//
 typedef struct {
 	fd_poll_t* epl;
-	queue_t* qe;
-	queue_t* eqe;
+	queue_t* input;
+	queue_t* output;
 	sock_t* srv;
-	queue_t* qel;
+	queue_t* signal_queue;
 } network_args;
 
 //workers
 void* network_worker(void* args){
 	network_args* arg = args;
-	fd_poll_t* epl = arg->epl;
-	queue_t* qe = arg->qe; 
-	queue_t* eqe = arg->eqe;
-	queue_t* qel = arg->qel;
-	sock_t* srv = arg->srv;
-	event_main(srv, epl, qe, eqe, qel);
+	event_main(arg->srv, arg->epl, arg->output, arg->input, arg->signal_queue);
 	return 0;
 }
 
@@ -42,26 +39,26 @@ int main(){
 		return -2;
 	}
      
-	queue_t* qe = create_queue(1);
-	queue_t* eqe = create_queue(1);
-	queue_t* commands = create_queue(1);
+	queue_t* network_output = create_queue(1);
+	queue_t* network_input = create_queue(1);
+	queue_t* network_signal = create_queue(1);
 	network_args args = {0};
 
 	args.epl = epl;
-	args.qe = qe;
-	args.eqe = eqe;
+	args.input = network_input;
+	args.output = network_output;
 	args.srv = server;
-	args.qel = commands;
+	args.signal_queue = network_signal;
 
-	add_poll_event(epl, server, ACCEPTABLE, 0, 0);
-	add_poll_event(epl, NULL, READABLE, eqe->wakeup_fd, 0);
-	add_poll_event(epl, NULL, READABLE, commands->wakeup_fd, 0);
+	add_poll_event(epl, server, ACCEPTABLE, 0, EPOLLONESHOT);
+	add_poll_event(epl, NULL, READABLE, network_input->wakeup_fd, 0);
+	add_poll_event(epl, NULL, READABLE, network_signal->wakeup_fd, 0);
 
 	pthread_create(&network_main_thread, NULL, network_worker, &args);
 	printf("[Network] Started.\n");
 
 	fd_poll_t* events_poll = create_poll(15, 10);
-	add_poll_event(events_poll, NULL, READABLE, qe->wakeup_fd,0);
+	add_poll_event(events_poll, NULL, READABLE, network_output->wakeup_fd,0);
 	event_t** evs = calloc(events_poll->max_evs_count, sizeof(event_t*));
 	if(evs == NULL) return -1;
 
@@ -69,12 +66,26 @@ int main(){
 	while(running){
 		int c = wait_events(events_poll, evs);
 		if(c < 1) continue;
-		event_t* ev = pop_queue(qe, LOCK);
+		event_t* ev = pop_queue(network_output, LOCK);
 		if(ev == NULL) continue;
 
 		event_t* eev;
 
 		switch(ev->state){
+			case ACCEPTABLE:
+				ev->active = 0;
+				push_queue(network_input, ev, LOCK);
+
+				fprintf(stderr, "accept on fd ");
+				sock_t* client = accept_socket(server);	
+				fprintf(stderr, "%d", client->fd);
+				eev = malloc(sizeof(event_t));
+				eev->sc = client;
+				eev->state = READABLE;
+				eev->active = 1;
+				usleep(100); //solve wtf is this(i think that if in epoll processing something creates event epoll just ignore it)
+				push_queue(network_input, eev, LOCK);
+				break;
 			case CLOSABLE:
 				fprintf(stderr, "close\n");
 				eev = malloc(sizeof(event_t)); 
@@ -82,7 +93,7 @@ int main(){
 				eev->state = CLOSABLE;	
 				eev->active = 1;
 				destroy_socket(ev->sc);
-				push_queue(eqe, eev, LOCK); 
+				push_queue(network_input, eev, LOCK); 
 				break;	
 			case READABLE:
 				char buffer[256] = {0};
@@ -95,10 +106,10 @@ int main(){
 					fprintf(stderr, "stop");
 					command_t* cmd = malloc(sizeof(command_t));
 					cmd->command = SHUTDOWN;	
-					push_queue(commands, cmd, LOCK);
+					push_queue(network_signal, cmd, LOCK);
 					running = 0;
 				}
-				push_queue(eqe, ev, LOCK); 
+				push_queue(network_input, ev, LOCK); 
 				break;
 		}
 	}
